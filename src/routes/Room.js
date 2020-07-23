@@ -72,7 +72,7 @@ const Room = (props) => {
         });
 
         //calling Download service worker
-        worker.addEventListener("message", down);
+        // worker.addEventListener("message", down);
 
         socketRef.current.on("room full", () => {
             alert("room is full");
@@ -89,6 +89,8 @@ const Room = (props) => {
         const stream = event.data.stream();
         const fileStream = streamSaver.createWriteStream(fileNameRef.current);
         stream.pipeTo(fileStream);
+        const peer = peerRef.current;
+        peer.write(JSON.stringify({ wait:true}));
     }
 
     function createPeer(userToSignal, callerID) {
@@ -129,20 +131,17 @@ const Room = (props) => {
     }
 
     function handleReceivingData(data) {
-        
-        if (data.toString().includes("done")) {
+
+        if(data.toString().includes("wait")){
+            setBtnWait(false);
+        } else if (data.toString().includes("done") ) {
             setGotFile(true);
             const parsed = JSON.parse(data);
-            fileNameRef.current = parsed.fileName;
-            console.log(parsed);
-            
-        } else {
-            
+            fileNameRef.current = parsed.fileName;            
+
+        }else{
             worker.postMessage(data);
-            if(JSON.parse(data).wait == true){
-                setBtnWait(false);
-            }
-        }
+        } 
         
     }
 
@@ -150,8 +149,7 @@ const Room = (props) => {
     function download() {
         setGotFile(false);
         worker.postMessage("download");
-        const peer = peerRef.current;
-        peer.write(JSON.stringify({wait:true}));
+        worker.addEventListener("message", down);
     }
 
     function selectFile(e) {
@@ -160,31 +158,29 @@ const Room = (props) => {
 
     function sendFile() {
         setBtnWait(true)
-        setIsloading(0)
+        // setIsloading(0)
         const peer = peerRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
-        let progress = 0
+        // let progress = 0
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
-            progress++
+            // progress++
         });
 
         function handlereading(done, value) {
             if (done) {
                 peer.write(JSON.stringify({ done: true, fileName: file.name}));
-                console.log(progress);
-                setIsloading(progress)
-                document.getElementById("file").maxValue = progress;
-                setFile(null);
+                // console.log(progress);
+                // setIsloading(progress)
                 return;
             }
 
             peer.write(value);
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
-                progress++
-                setIsloading(progress++)
+                // progress++
+                // setIsloading(progress++)
             })
         }
     }
