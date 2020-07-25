@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import axios from 'axios';
-
+import {down} from '../util/downloader';
 const Container = styled.div`
     padding: 20px;
     display: flex;
@@ -42,8 +42,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
 
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         if(roomID == "public"){
@@ -63,6 +63,7 @@ const Room = (props) => {
         socketRef.current.on("all users", users => {
             peerRef.current = createPeer(users[0], socketRef.current.id);
         });
+        
         socketRef.current.on("user joined", payload => {
             peerRef.current = addPeer(payload.signal, payload.callerID);
             setGuestName(payload.username)
@@ -77,7 +78,7 @@ const Room = (props) => {
         });
 
         //calling Download service worker
-        worker.addEventListener("message", down);
+        worker.addEventListener("message", (e)=>down(e,fileNameRef.current,peerRef.current));
 
         socketRef.current.on("room full", () => {
             alert("room is full");
@@ -89,43 +90,6 @@ const Room = (props) => {
         });
 
     }, []);
-
-//custom pipe function for unsupported browsers
-    async function pipe(readStream, writeStream) {
-        const writer = writeStream.getWriter();
-        for await (const chunk of readStream) {
-            await writer.write(chunk);
-        }
-        await writer.close();
-    }
-
-    function streamAsyncIterator(readableStream) {
-        const reader = readableStream.getReader();
-        return {
-          next(){
-            return reader.read();
-          },
-          return(){
-            return reader.cancel();
-          },
-          [Symbol.asyncIterator](){
-            return this;
-          }
-        }
-      }
-
-   async function down (event){
-
-        const stream = event.data.stream();
-        const fileStream = streamSaver.createWriteStream(fileNameRef.current);
-      if( stream.pipeTo){
-        stream.pipeTo(fileStream);
-      } else{
-        await pipe(streamAsyncIterator(event.data.stream()), fileStream);
-      }
-        const peer = peerRef.current;
-        peer.write(JSON.stringify({ wait:true}));
-    }
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
@@ -183,7 +147,6 @@ const Room = (props) => {
     function download() {
         setGotFile(false);
         worker.postMessage("download");
-
     }
 
     function selectFile(e) {
