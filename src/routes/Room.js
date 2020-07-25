@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import axios from 'axios';
 
@@ -37,6 +38,10 @@ const Room = (props) => {
     
     
     useEffect( async () => {
+        if (!window.WritableStream) {
+            streamSaver.WritableStream = WritableStream;
+        }
+
         // socketRef.current = io("https://p2p-dev.herokuapp.com/");
         socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
@@ -72,7 +77,7 @@ const Room = (props) => {
         });
 
         //calling Download service worker
-        // worker.addEventListener("message", down);
+        worker.addEventListener("message", down);
 
         socketRef.current.on("room full", () => {
             alert("room is full");
@@ -85,10 +90,39 @@ const Room = (props) => {
 
     }, []);
 
-    function down (event){
+//custom pipe function for unsupported browsers
+    async function pipe(readStream, writeStream) {
+        const writer = writeStream.getWriter();
+        for await (const chunk of readStream) {
+            await writer.write(chunk);
+        }
+        await writer.close();
+    }
+
+    function streamAsyncIterator(readableStream) {
+        const reader = readableStream.getReader();
+        return {
+          next(){
+            return reader.read();
+          },
+          return(){
+            return reader.cancel();
+          },
+          [Symbol.asyncIterator](){
+            return this;
+          }
+        }
+      }
+
+   async function down (event){
+
         const stream = event.data.stream();
         const fileStream = streamSaver.createWriteStream(fileNameRef.current);
+      if( stream.pipeTo){
         stream.pipeTo(fileStream);
+      } else{
+        await pipe(streamAsyncIterator(event.data.stream()), fileStream);
+      }
         const peer = peerRef.current;
         peer.write(JSON.stringify({ wait:true}));
     }
@@ -149,7 +183,7 @@ const Room = (props) => {
     function download() {
         setGotFile(false);
         worker.postMessage("download");
-        worker.addEventListener("message", down);
+
     }
 
     function selectFile(e) {

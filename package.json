@@ -17,7 +17,8 @@
     "socket.io-client": "^2.3.0",
     "streamsaver": "^2.0.4",
     "styled-components": "^5.1.0",
-    "uuid": "^7.0.3"
+    "uuid": "^7.0.3",
+    "web-streams-polyfill": "^2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
