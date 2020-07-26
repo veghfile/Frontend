@@ -4,16 +4,17 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
-import axios from 'axios';
 import {down} from '../util/downloader';
-const Container = styled.div`
-    padding: 20px;
-    display: flex;
-    height: 100vh;
-    width: 90%;
-    margin: auto;
-    flex-wrap: wrap;
-`;
+import {getip} from '../util/getip';
+import './style.css'
+// const Container = styled.div`
+//     padding: 20px;
+//     display: flex;
+//     height: 100vh;
+//     width: 90%;
+//     margin: auto;
+//     flex-wrap: wrap;
+// `;
 
 const worker = new Worker("../worker.js");
 
@@ -25,7 +26,7 @@ const Room = (props) => {
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
     const [btnWait, setBtnWait] = useState(false);
-    const [pubIp , setPubIp] = useState()
+    const [pubIp , setPubIp] = useState("")
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
@@ -33,8 +34,6 @@ const Room = (props) => {
     const fileNameRef = useRef("");
     
     const roomID = props.match.params.roomID;
-    
-    let pubId = ""
     
     
     useEffect( async () => {
@@ -47,15 +46,7 @@ const Room = (props) => {
 
         //This statement is used if the user is on the public route
         if(roomID == "public"){
-            axios.get(`https://api6.ipify.org?format=json`)
-            .then((response) =>{
-                pubId = response.data.ip
-                setPubIp(pubId)
-                socketRef.current.emit("join room using ip", pubId);
-                console.log(pubId);
-            }).catch( error => {
-                error = new Error("NOT FOUND 404");
-            })
+            getip(setPubIp,socketRef.current)
         } else {
             socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
         }
@@ -184,20 +175,6 @@ const Room = (props) => {
 
 
 //TODO code splitting components
-    let body;
-    if (connectionEstablished) {
-        body = (
-            <div>
-                <input onChange={selectFile} type="file" />
-                <button disabled={btnWait} onClick={sendFile}>Send file</button>
-            </div>
-        );
-    } else {
-        body = (
-            <h1>Once you have a peer connection, you will be able to share files</h1>
-        );
-    }
-
 
     let downloadPrompt;
     if (gotFile) {
@@ -210,14 +187,41 @@ const Room = (props) => {
     }
     let loading =<span>{isloading}<progress id="file" value={isloading} > 32% </progress></span>
     return (
-        <Container>
-            {body}
-            {downloadPrompt}
-            {loading}
-            <h1>Host:- {hostName}</h1><br/>
-            <h2>Guest:- {guestName} </h2>
-            <h2>{pubIp}</h2>
-        </Container>
+        <>
+            {connectionEstablished?(
+                <main>
+                  <div class="dropper">
+                        <div>
+                            <input onChange={selectFile} type="file" />
+                            <button disabled={btnWait} onClick={sendFile}>Send file</button>
+                            {downloadPrompt}
+                            {loading}
+                        </div>
+                  </div>
+                  <div class="share-info">
+                    <h1>INFO</h1>
+                    <h2>Host:- {hostName}</h2><br/>
+                    <h2>Guest:- {guestName} </h2>
+                    <h2>{pubIp}</h2>
+                  </div>
+                  <div class="footer">
+                    <h1>Box 3</h1>
+                  </div>
+                </main>
+            ):(
+                <main>
+                <div class="dropper">
+                <h1>Once you have a peer connection, you will be able to share files</h1>
+                </div>
+                <div class="share-info">
+                  <h1>NO INFO</h1>
+                </div>
+                <div class="footer">
+                  <h1>Box 3</h1>
+                </div>
+              </main>
+            )}
+        </>
     );
 };
 

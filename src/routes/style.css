@@ -1,0 +1,43 @@
+*{
+  margin :0;
+  padding:0;
+  box-sizing: border-box;
+}
+
+.dropper {
+  background-color: lightcoral;
+  grid-area: box1;
+}
+.share-info {
+  background-color: lightblue;
+  grid-area: box2;
+
+}
+.footer {
+  background-color: lightgreen;
+  grid-area: box3;
+
+}
+
+main{
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: 
+  "box1 box2"
+  "box3 box3";
+  height: 100vh;
+}
+
+@media only screen and (max-width: 768px) {
+  main{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1.5fr 0.2fr;
+    grid-template-areas: 
+    "box2"
+    "box1"
+    "box3";
+    height: 100vh;
+  }
+}

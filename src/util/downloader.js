@@ -1,17 +1,17 @@
-import {pipe , streamAsyncIterator} from './pipe';
+import {pipe, streamAsyncIterator} from './pipe';
 import streamSaver from "streamsaver";
 
-
-export async function down (event,fname,pname){
-    const stream = event.data.stream();
+export async function down(event, fname, pname) {
+    const stream = event
+        .data
+        .stream();
     const fileStream = streamSaver.createWriteStream(fname);
-    if( stream.pipeTo)
-    {
+    if (stream.pipeTo) {
         stream.pipeTo(fileStream);
-    } else{
+    } else {
         //custom pipe function for unsupported browsers
         await pipe(streamAsyncIterator(event.data.stream()), fileStream);
     }
     const peer = pname;
-    peer.write(JSON.stringify({ wait:true}));
+    peer.write(JSON.stringify({wait: true}));
 }
