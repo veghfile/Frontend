@@ -6,15 +6,10 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import Filedropper from '../components/filedropper/index';
+import FileModal from '../components/filemodal/index';
 import './style.css'
-// const Container = styled.div`
-//     padding: 20px;
-//     display: flex;
-//     height: 100vh;
-//     width: 90%;
-//     margin: auto;
-//     flex-wrap: wrap;
-// `;
+
 
 const worker = new Worker("../worker.js");
 
@@ -99,7 +94,6 @@ const Room = (props) => {
         return peer;
     }
     
-
     function addPeer(incomingSignal, callerID) {
         const peer = new Peer({
             initiator: false,
@@ -134,14 +128,9 @@ const Room = (props) => {
         
     }
 
-
     function download() {
         setGotFile(false);
         worker.postMessage("download");
-    }
-
-    function selectFile(e) {
-        setFile(e.target.files[0]);
     }
 
     function sendFile() {
@@ -173,50 +162,44 @@ const Room = (props) => {
         }
     }
 
+    function fileCallback(file){
+        setFile(file);
+    }
+
 
 //TODO code splitting components
 
-    let downloadPrompt;
-    if (gotFile) {
-        downloadPrompt = (
-            <div>
-                <span>You have received a file. Would you like to download the file?</span>
-                <button onClick={download}>Yes</button>
-            </div>
-        );
-    }
     let loading =<span>{isloading}<progress id="file" value={isloading} > 32% </progress></span>
     return (
         <>
             {connectionEstablished?(
                 <main>
-                  <div class="dropper">
+                  <div className="dropper">
                         <div>
-                            <input onChange={selectFile} type="file" />
-                            <button disabled={btnWait} onClick={sendFile}>Send file</button>
-                            {downloadPrompt}
+                            <Filedropper fileCallback={fileCallback} wait={btnWait} sendFile={sendFile} />  
+                            {gotFile?<FileModal handleDownload={download} />:null}
                             {loading}
                         </div>
                   </div>
-                  <div class="share-info">
+                  <div className="share-info">
                     <h1>INFO</h1>
                     <h2>Host:- {hostName}</h2><br/>
                     <h2>Guest:- {guestName} </h2>
                     <h2>{pubIp}</h2>
                   </div>
-                  <div class="footer">
+                  <div className="footer">
                     <h1>Box 3</h1>
                   </div>
                 </main>
             ):(
                 <main>
-                <div class="dropper">
+                <div className="dropper">
                 <h1>Once you have a peer connection, you will be able to share files</h1>
                 </div>
-                <div class="share-info">
+                <div className="share-info">
                   <h1>NO INFO</h1>
                 </div>
-                <div class="footer">
+                <div className="footer">
                   <h1>Box 3</h1>
                 </div>
               </main>
