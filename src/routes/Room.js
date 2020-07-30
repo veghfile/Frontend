@@ -17,6 +17,7 @@ const Room = (props) => {
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
+    const [amIHost, setamIHost] = useState(false);
     const [isloading, setIsloading] = useState(0);
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
@@ -36,8 +37,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
 
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         if(roomID == "public"){
@@ -71,7 +72,7 @@ const Room = (props) => {
         })
 
         socketRef.current.on("user left", (data) => {
-            alert("user diconnected",data);
+            // alert("user diconnected",data);
             setConnection(false);
         });
 
@@ -104,6 +105,7 @@ const Room = (props) => {
         peer.on("signal", signal => {
             let hname = Math.random()
             socketRef.current.emit("returning signal", { signal, callerID,username:hname });
+            setamIHost(true)
             setHostName(hname)
         });
 
@@ -133,7 +135,7 @@ const Room = (props) => {
         worker.postMessage("download");
     }
 
-    function sendFile() {
+    function sendFile(file) {
         setBtnWait(true)
         // setIsloading(0)
         const peer = peerRef.current;
@@ -164,6 +166,7 @@ const Room = (props) => {
 
     function fileCallback(file){
         setFile(file);
+        sendFile(file);
     }
 
 
@@ -172,38 +175,22 @@ const Room = (props) => {
     let loading =<span>{isloading}<progress id="file" value={isloading} > 32% </progress></span>
     return (
         <>
-            {connectionEstablished?(
                 <main>
                   <div className="dropper">
-                        <div>
-                            <Filedropper fileCallback={fileCallback} wait={btnWait} sendFile={sendFile} />  
+                            <Filedropper connectionEstablished={connectionEstablished} fileCallback={fileCallback} wait={btnWait} guestName={amIHost?guestName:hostName} sendFile={sendFile} />  
                             {gotFile?<FileModal handleDownload={download} />:null}
-                            {loading}
-                        </div>
+                            {/* {loading} */}
                   </div>
                   <div className="share-info">
                     <h1>INFO</h1>
-                    <h2>Host:- {hostName}</h2><br/>
-                    <h2>Guest:- {guestName} </h2>
+                    <h2>You:- {amIHost?hostName:guestName}</h2><br/>
                     <h2>{pubIp}</h2>
                   </div>
                   <div className="footer">
                     <h1>Box 3</h1>
                   </div>
                 </main>
-            ):(
-                <main>
-                <div className="dropper">
-                <h1>Once you have a peer connection, you will be able to share files</h1>
-                </div>
-                <div className="share-info">
-                  <h1>NO INFO</h1>
-                </div>
-                <div className="footer">
-                  <h1>Box 3</h1>
-                </div>
-              </main>
-            )}
+
         </>
     );
 };

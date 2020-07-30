@@ -5,8 +5,8 @@
 }
 
 .dropper {
-  background-color: lightcoral;
   grid-area: box1;
+  padding: 5%;
 }
 .share-info {
   background-color: lightblue;
