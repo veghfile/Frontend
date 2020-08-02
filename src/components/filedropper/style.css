@@ -80,11 +80,16 @@
 }
 
 .input-cont .button-primary {
+  background: #16BAC5;
   padding: 8%;
   width: 100%;
   border-radius: 10px;
   border: none;
   margin: 10px;
+}
+
+.input-cont .button-primary:hover {
+  background: #F4442E;
 }
 
 .input-cont .button-secondary {
@@ -120,6 +125,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0 10px;
+  color: #C7C7C7;
 }
 
 .align-center {

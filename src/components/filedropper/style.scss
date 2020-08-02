@@ -49,11 +49,16 @@
   align-items: center;
 
   .button-primary {
+    background: #16BAC5;
     padding: 8%;
     width: 100%;
     border-radius: 10px;
     border: none;
     margin: 10px;
+  }
+
+  .button-primary:hover{
+    background: #F4442E;
   }
 
   .button-secondary {
@@ -83,6 +88,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin: 0 10px;
+    color:#C7C7C7
   }
 }
 

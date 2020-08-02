@@ -22,6 +22,8 @@ const Room = (props) => {
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
     const [btnWait, setBtnWait] = useState(false);
+    const [load, setLoad] = useState(false);
+    const [receiver, setReceiver] = useState(false);
     const [pubIp , setPubIp] = useState("")
     const chunksRef = useRef([]);
     const socketRef = useRef();
@@ -54,12 +56,10 @@ const Room = (props) => {
         socketRef.current.on("user joined", payload => {
             peerRef.current = addPeer(payload.signal, payload.callerID);
             setGuestName(payload.username)
-            console.log("guest",payload);
         });
 
         socketRef.current.on("receiving returned signal", payload => {
             peerRef.current.signal(payload.signal);
-            console.log("host",payload);
             setHostName(payload.username)
             setConnection(true);
         });
@@ -116,15 +116,21 @@ const Room = (props) => {
     }
 
     function handleReceivingData(data) {
-
-        if(data.toString().includes("wait")){
+        //todo convert to switch case
+        if(data.toString().includes("load")){
+            setLoad(false)
+            setBtnWait(true)            
+        }else if(data.toString().includes("wait")){
             setBtnWait(false);
         } else if (data.toString().includes("done") ) {
             setGotFile(true);
+            setReceiver(false)
             const parsed = JSON.parse(data);
             fileNameRef.current = parsed.fileName;            
-
+            const peer = peerRef.current;
+            peer.write(JSON.stringify({ load:true}));
         }else{
+            setReceiver(true)
             worker.postMessage(data);
         } 
         
@@ -135,8 +141,14 @@ const Room = (props) => {
         worker.postMessage("download");
     }
 
+    function downloadAbort() {
+        setGotFile(false);
+        worker.postMessage("abort");
+        const peer = peerRef.current;
+        peer.write(JSON.stringify({ wait:true}));
+    }
+
     function sendFile(file) {
-        setBtnWait(true)
         // setIsloading(0)
         const peer = peerRef.current;
         const stream = file.stream();
@@ -144,13 +156,14 @@ const Room = (props) => {
         // let progress = 0
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
+            setLoad(true)
             // progress++
         });
-
+        
         function handlereading(done, value) {
             if (done) {
                 peer.write(JSON.stringify({ done: true, fileName: file.name}));
-                // console.log(progress);
+                
                 // setIsloading(progress)
                 return;
             }
@@ -177,8 +190,17 @@ const Room = (props) => {
         <>
                 <main>
                   <div className="dropper">
-                            <Filedropper connectionEstablished={connectionEstablished} fileCallback={fileCallback} wait={btnWait} guestName={amIHost?guestName:hostName} sendFile={sendFile} />  
-                            {gotFile?<FileModal handleDownload={download} />:null}
+                            <Filedropper 
+                            connectionEstablished={connectionEstablished} 
+                            fileCallback={fileCallback} 
+                            wait={btnWait} 
+                            setBtnWait={setBtnWait}
+                            load={load} 
+                            receiver={receiver}
+                            setLoad={setLoad}
+                            guestName={amIHost?guestName:hostName} 
+                            sendFile={sendFile} />  
+                            {gotFile?<FileModal handleAbort={downloadAbort} handleDownload={download} />:null}
                             {/* {loading} */}
                   </div>
                   <div className="share-info">

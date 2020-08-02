@@ -2,10 +2,13 @@ import React, {useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import Usersvg from '../static/user.svg'
 import Lock from '../static/lock.svg'
-import "./style.css"
+import Button from '../../modules/button/index';
+import {BarLoader} from 'react-spinners';
+import "./style.css";
+
 
 function Filedropper(props) {
-    const {fileCallback, wait, guestName, connectionEstablished} = props
+    const {fileCallback, wait, guestName, connectionEstablished,setBtnWait,load,receiver} = props
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
         noClick: true,
@@ -23,10 +26,11 @@ function Filedropper(props) {
                         {!connectionEstablished?
                             <div className="peer-avatar align-center">
                                 <div className="flex-col-center">
-                                    <h3>There is no one in the room!</h3>
+                                    <h2>There is no one in the room!</h2>
                                     <p>Once you have a peer connection, you will be able to share files</p>
                                 </div>
                             </div>:
+                            //add avatar module here
                             <div className="peer-avatar ">
                                 <div className="flex-col-center">
                                     <img src={Usersvg} />
@@ -37,14 +41,30 @@ function Filedropper(props) {
                             <div className="privacy-cont">
                                 <img src={Lock} />
                                 <p>Private Room</p>
-                            </div>  
-                            {wait?
+                            </div>
+                            {load?
+                                <div className="file-container">
+                                    <div className="input-cont">
+                                    <p>Sending File</p>
+                                        <BarLoader load />
+                                    </div>
+                                </div>
+                                :
+                                receiver?
+                                <div className="file-container">
+                                    <div className="input-cont">
+                                    <p>Receiving File</p>
+                                        <BarLoader load />
+                                    </div>
+                                </div>                           
+                                :
+                                wait?
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <p>Wait till the user accepts the file</p>
-                                        <button className="button-secondary" type="button">
+                                        <Button className="button-secondary" onClick={()=>setBtnWait(false)} type="Button">
                                             Cancel
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                                 :
@@ -53,9 +73,9 @@ function Filedropper(props) {
                                         <input id="yolo" {...getInputProps()}/>
                                         <p>Drag a File here to Send</p>
                                         <p>OR</p>
-                                        <button className="button-primary" type="button" onClick={open}>
+                                        <Button className="button-primary" type="Button" onClick={open}>
                                             Select File
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             }
