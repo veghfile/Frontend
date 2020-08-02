@@ -6,6 +6,7 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
 import './style.css'
@@ -39,8 +40,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
 
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         if(roomID == "public"){
@@ -207,6 +208,9 @@ const Room = (props) => {
                     <h1>INFO</h1>
                     <h2>You:- {amIHost?hostName:guestName}</h2><br/>
                     <h2>{pubIp}</h2>
+                    <div>
+                        <QRCode qrUrl  = "www.google.com"></QRCode>
+                    </div>
                   </div>
                   <div className="footer">
                     <h1>Box 3</h1>
