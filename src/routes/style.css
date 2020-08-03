@@ -28,6 +28,7 @@
   
 }
 .qrCont{
+  display: inline-grid;
   grid-area: con2;
 }
 .sharingCont{
