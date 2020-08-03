@@ -8,7 +8,7 @@ import "./style.css";
 
 
 function Filedropper(props) {
-    const {fileCallback, wait, guestName, connectionEstablished,setBtnWait,load,receiver} = props
+    const {fileCallback, wait, guestName, connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm} = props
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
         noClick: true,
@@ -42,14 +42,30 @@ function Filedropper(props) {
                                 <img src={Lock} />
                                 <p>Private Room</p>
                             </div>
-                            {load?
+                            {
+                            confirmSend?
+                                <div className="file-container">
+                                    <div className="input-cont">
+                                    <p>Do you want to send ?</p>
+                                    <div className="confirm-inputs">
+                                    <Button className="button-secondary" type="Button" onClick={()=>sendConfirm(true)}>
+                                           Send
+                                    </Button>
+                                    <Button className="button-secondary" type="Button" onClick={()=>sendConfirm(false)}>
+                                           Cancel
+                                    </Button>
+                                    </div>
+                                    </div>
+                                </div>                            
+                            :
+                            load?
                                 <div className="file-container">
                                     <div className="input-cont">
                                     <p>Sending File</p>
                                         <BarLoader load />
                                     </div>
                                 </div>
-                                :
+                            :
                                 receiver?
                                 <div className="file-container">
                                     <div className="input-cont">
@@ -57,7 +73,7 @@ function Filedropper(props) {
                                         <BarLoader load />
                                     </div>
                                 </div>                           
-                                :
+                            :
                                 wait?
                                 <div className="file-container">
                                     <div className="input-cont">
@@ -67,7 +83,7 @@ function Filedropper(props) {
                                         </Button>
                                     </div>
                                 </div>
-                                :
+                            :
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <input id="yolo" {...getInputProps()}/>

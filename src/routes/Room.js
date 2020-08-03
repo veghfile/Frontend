@@ -22,6 +22,7 @@ const Room = (props) => {
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
     const [btnWait, setBtnWait] = useState(false);
+    const [confirmSend, setConfirmSend] = useState(false);
     const [load, setLoad] = useState(false);
     const [receiver, setReceiver] = useState(false);
     const [pubIp , setPubIp] = useState("")
@@ -148,6 +149,15 @@ const Room = (props) => {
         peer.write(JSON.stringify({ wait:true}));
     }
 
+    function sendConfirm (ans){
+        if(ans){
+            sendFile(file)
+            setConfirmSend(false)
+        } else{
+            setConfirmSend(false)
+        }
+    }
+
     function sendFile(file) {
         // setIsloading(0)
         const peer = peerRef.current;
@@ -179,7 +189,8 @@ const Room = (props) => {
 
     function fileCallback(file){
         setFile(file);
-        sendFile(file);
+        setConfirmSend(true)
+        // sendFile(file);
     }
 
 
@@ -198,6 +209,8 @@ const Room = (props) => {
                             load={load} 
                             receiver={receiver}
                             setLoad={setLoad}
+                            confirmSend={confirmSend}
+                            sendConfirm={sendConfirm}
                             guestName={amIHost?guestName:hostName} 
                             sendFile={sendFile} />  
                             {gotFile?<FileModal handleAbort={downloadAbort} handleDownload={download} />:null}
