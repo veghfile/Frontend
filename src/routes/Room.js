@@ -205,11 +205,16 @@ const Room = (props) => {
                             {/* {loading} */}
                   </div>
                   <div className="share-info">
-                    <h1>INFO</h1>
-                    <h2>You:- {amIHost?hostName:guestName}</h2><br/>
-                    <h2>{pubIp}</h2>
-                    <div>
+                    <div className = "userInfo">
+                        <h1>INFO</h1>
+                        <h2>You:- {amIHost?hostName:guestName}</h2><br/>
+                        <h2>{pubIp}</h2>
+                    </div>
+                    <div className = "qrCont">
                         <QRCode qrUrl  = "www.google.com"></QRCode>
+                    </div>
+                    <div className = "sharingCont">
+                            <p>Box3</p>
                     </div>
                   </div>
                   <div className="footer">
