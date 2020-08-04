@@ -31,6 +31,7 @@ const Room = (props) => {
     const peersRef = useRef([]);
     const peerRef = useRef();
     const fileNameRef = useRef("");
+    const pendingOp = useRef("");
     
     const roomID = props.match.params.roomID;
     
@@ -74,10 +75,22 @@ const Room = (props) => {
 
         socketRef.current.on("user left", (data) => {
             // alert("user diconnected",data);
+            handleLeaving()
             setConnection(false);
         });
 
     }, []);
+
+    function handleLeaving (){
+        console.log(pendingOp.current);
+        
+        if(pendingOp.current){
+            window.location.reload(false)
+        }
+        setReceiver(false)
+        setGotFile(false);
+        worker.postMessage("abort");
+    }
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
@@ -125,7 +138,8 @@ const Room = (props) => {
             setBtnWait(false);
         } else if (data.toString().includes("done") ) {
             setGotFile(true);
-            setReceiver(false)
+            setReceiver(false);
+            pendingOp.current = false    
             const parsed = JSON.parse(data);
             fileNameRef.current = parsed.fileName;            
             const peer = peerRef.current;
@@ -144,6 +158,7 @@ const Room = (props) => {
 
     function downloadAbort() {
         setGotFile(false);
+        pendingOp.current = false
         worker.postMessage("abort");
         const peer = peerRef.current;
         peer.write(JSON.stringify({ wait:true}));
@@ -163,6 +178,7 @@ const Room = (props) => {
         const peer = peerRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
+        pendingOp.current = true
         // let progress = 0
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
@@ -173,7 +189,6 @@ const Room = (props) => {
         function handlereading(done, value) {
             if (done) {
                 peer.write(JSON.stringify({ done: true, fileName: file.name}));
-                
                 // setIsloading(progress)
                 return;
             }
