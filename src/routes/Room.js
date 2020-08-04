@@ -27,6 +27,7 @@ const Room = (props) => {
     const [load, setLoad] = useState(false);
     const [receiver, setReceiver] = useState(false);
     const [pubIp , setPubIp] = useState("")
+    const [currentURL , setCurrentURL] = useState("")
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
@@ -41,7 +42,7 @@ const Room = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-
+        setCurrentURL(window.location.href)
         socketRef.current = io("https://p2p-dev.herokuapp.com/");
         // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
@@ -239,7 +240,7 @@ const Room = (props) => {
                         <h2>{pubIp}</h2>
                     </div>
                     <div className = "qrCont">
-                        <QRCode qrUrl  = "www.google.com"></QRCode>
+                        <QRCode qrUrl  = {currentURL}></QRCode>
                     </div>
                     <div className = "sharingCont">
                             <p>Box3</p>
