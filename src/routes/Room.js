@@ -6,6 +6,7 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
 import './style.css'
@@ -17,16 +18,22 @@ const Room = (props) => {
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
+    const [amIHost, setamIHost] = useState(false);
     const [isloading, setIsloading] = useState(0);
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
     const [btnWait, setBtnWait] = useState(false);
+    const [confirmSend, setConfirmSend] = useState(false);
+    const [load, setLoad] = useState(false);
+    const [receiver, setReceiver] = useState(false);
     const [pubIp , setPubIp] = useState("")
+    const [currentURL , setCurrentURL] = useState("")
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
     const peerRef = useRef();
     const fileNameRef = useRef("");
+    const pendingOp = useRef("");
     
     const roomID = props.match.params.roomID;
     
@@ -35,7 +42,7 @@ const Room = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-
+        setCurrentURL(window.location.href)
         socketRef.current = io("https://p2p-dev.herokuapp.com/");
         // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
@@ -53,12 +60,10 @@ const Room = (props) => {
         socketRef.current.on("user joined", payload => {
             peerRef.current = addPeer(payload.signal, payload.callerID);
             setGuestName(payload.username)
-            console.log("guest",payload);
         });
 
         socketRef.current.on("receiving returned signal", payload => {
             peerRef.current.signal(payload.signal);
-            console.log("host",payload);
             setHostName(payload.username)
             setConnection(true);
         });
@@ -71,11 +76,23 @@ const Room = (props) => {
         })
 
         socketRef.current.on("user left", (data) => {
-            alert("user diconnected",data);
+            // alert("user diconnected",data);
+            handleLeaving()
             setConnection(false);
         });
 
     }, []);
+
+    function handleLeaving (){
+        console.log(pendingOp.current);
+        
+        if(pendingOp.current){
+            window.location.reload(false)
+        }
+        setReceiver(false)
+        setGotFile(false);
+        worker.postMessage("abort");
+    }
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
@@ -104,6 +121,7 @@ const Room = (props) => {
         peer.on("signal", signal => {
             let hname = Math.random()
             socketRef.current.emit("returning signal", { signal, callerID,username:hname });
+            setamIHost(true)
             setHostName(hname)
         });
 
@@ -114,15 +132,22 @@ const Room = (props) => {
     }
 
     function handleReceivingData(data) {
-
-        if(data.toString().includes("wait")){
+        //todo convert to switch case
+        if(data.toString().includes("load")){
+            setLoad(false)
+            setBtnWait(true)            
+        }else if(data.toString().includes("wait")){
             setBtnWait(false);
         } else if (data.toString().includes("done") ) {
             setGotFile(true);
+            setReceiver(false);
+            pendingOp.current = false    
             const parsed = JSON.parse(data);
             fileNameRef.current = parsed.fileName;            
-
+            const peer = peerRef.current;
+            peer.write(JSON.stringify({ load:true}));
         }else{
+            setReceiver(true)
             worker.postMessage(data);
         } 
         
@@ -133,22 +158,39 @@ const Room = (props) => {
         worker.postMessage("download");
     }
 
-    function sendFile() {
-        setBtnWait(true)
+    function downloadAbort() {
+        setGotFile(false);
+        pendingOp.current = false
+        worker.postMessage("abort");
+        const peer = peerRef.current;
+        peer.write(JSON.stringify({ wait:true}));
+    }
+
+    function sendConfirm (ans){
+        if(ans){
+            sendFile(file)
+            setConfirmSend(false)
+        } else{
+            setConfirmSend(false)
+        }
+    }
+
+    function sendFile(file) {
         // setIsloading(0)
         const peer = peerRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
+        pendingOp.current = true
         // let progress = 0
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
+            setLoad(true)
             // progress++
         });
-
+        
         function handlereading(done, value) {
             if (done) {
                 peer.write(JSON.stringify({ done: true, fileName: file.name}));
-                // console.log(progress);
                 // setIsloading(progress)
                 return;
             }
@@ -164,6 +206,8 @@ const Room = (props) => {
 
     function fileCallback(file){
         setFile(file);
+        setConfirmSend(true)
+        // sendFile(file);
     }
 
 
@@ -172,38 +216,41 @@ const Room = (props) => {
     let loading =<span>{isloading}<progress id="file" value={isloading} > 32% </progress></span>
     return (
         <>
-            {connectionEstablished?(
                 <main>
                   <div className="dropper">
-                        <div>
-                            <Filedropper fileCallback={fileCallback} wait={btnWait} sendFile={sendFile} />  
-                            {gotFile?<FileModal handleDownload={download} />:null}
-                            {loading}
-                        </div>
+                            <Filedropper 
+                            connectionEstablished={connectionEstablished} 
+                            fileCallback={fileCallback} 
+                            wait={btnWait} 
+                            setBtnWait={setBtnWait}
+                            load={load} 
+                            receiver={receiver}
+                            setLoad={setLoad}
+                            confirmSend={confirmSend}
+                            sendConfirm={sendConfirm}
+                            guestName={amIHost?guestName:hostName} 
+                            sendFile={sendFile} />  
+                            {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
+                            {/* {loading} */}
                   </div>
                   <div className="share-info">
-                    <h1>INFO</h1>
-                    <h2>Host:- {hostName}</h2><br/>
-                    <h2>Guest:- {guestName} </h2>
-                    <h2>{pubIp}</h2>
+                    <div className = "userInfo">
+                        <h1>INFO</h1>
+                        <h2>You:- {amIHost?hostName:guestName}</h2><br/>
+                        <h2>{pubIp}</h2>
+                    </div>
+                    <div className = "qrCont">
+                        <QRCode qrUrl  = {currentURL}></QRCode>
+                    </div>
+                    <div className = "sharingCont">
+                            <p>Box3</p>
+                    </div>
                   </div>
                   <div className="footer">
                     <h1>Box 3</h1>
                   </div>
                 </main>
-            ):(
-                <main>
-                <div className="dropper">
-                <h1>Once you have a peer connection, you will be able to share files</h1>
-                </div>
-                <div className="share-info">
-                  <h1>NO INFO</h1>
-                </div>
-                <div className="footer">
-                  <h1>Box 3</h1>
-                </div>
-              </main>
-            )}
+
         </>
     );
 };

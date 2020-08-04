@@ -1,0 +1,109 @@
+.container {
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='3' stroke-dasharray='5%2c15' stroke-dashoffset='23' stroke-linecap='square'/%3e%3c/svg%3e");
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropzone,
+.file-container,
+.peer-avatar {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.file-container,
+.peer-avatar {
+  height: -webkit-fill-available;
+  flex-direction: row;
+}
+
+.peer-avatar {
+  align-items: flex-end;
+  padding-bottom: 4ch;
+
+  img {
+    width: 10ch;
+    margin: 10px;
+  }
+  p{
+    text-align: center;
+    padding: 5px;
+    font-size: 1rem;
+    margin: 0 5ch
+  }
+}
+
+.file-container {
+  align-items: flex-start;
+}
+
+.confirm-inputs{
+  display: flex;
+  align-items: center;
+}
+
+.input-cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .button-primary {
+    background: #16BAC5;
+    padding: 8%;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    margin: 10px;
+  }
+
+  .button-primary:hover{
+    background: #F4442E;
+  }
+
+  .button-secondary {
+    padding: 2%;
+    width: 50%;
+    border-radius: 10px;
+    border: none;
+    margin: 10px;
+  }
+
+  p {
+    margin: 0.5rem;
+  }
+}
+
+.privacy-cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+
+  img {
+    width: 1.5rem;
+  }
+
+  p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 10px;
+    color:#C7C7C7
+  }
+}
+
+.align-center {
+  align-items: center;
+}
+
+.flex-col-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

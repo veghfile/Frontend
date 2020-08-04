@@ -5,7 +5,9 @@ self.addEventListener("message", event => {
         const blob = new Blob(array);
         self.postMessage(blob);
         array = [];
-    } else {
+    }else if (event.data === "abort") {
+        array = [];
+    }  else {
         array.push(event.data);        
     }
 })

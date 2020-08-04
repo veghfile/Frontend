@@ -1,0 +1,18 @@
+.qrContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border : solid black 0.2em;
+    border-radius: 10px;
+
+}
+.qrCode canvas {
+
+    width: 30%;
+    
+}
+.qrCode{
+    text-align: center;
+    
+}
