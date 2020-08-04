@@ -228,7 +228,7 @@ const Room = (props) => {
                             sendConfirm={sendConfirm}
                             guestName={amIHost?guestName:hostName} 
                             sendFile={sendFile} />  
-                            {gotFile?<FileModal handleAbort={downloadAbort} handleDownload={download} />:null}
+                            {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
                             {/* {loading} */}
                   </div>
                   <div className="share-info">
