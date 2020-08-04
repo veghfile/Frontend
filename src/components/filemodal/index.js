@@ -1,44 +1,29 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
-export default function AlertDialog() {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
+import './style.css';
+export default class FileModal extends React.Component {
+  state = {
+    open: false,
   };
-
-  const handleClose = () => {
-    setOpen(false);
+  onOpenModal = () => {
+    this.setState({ open: true });
   };
-
-  return (
-    <div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"File Transfer Request"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You have received an incoming file transfer request.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Reject
-          </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            Accept
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+  onCloseModal = () => {
+    this.setState({ open: false });
+  };
+  render() {
+    const { open } = this.state;
+    return (
+      <div>
+        <button onClick={this.onOpenModal}>Open modal</button>
+        <Modal open={open} onClose={this.onCloseModal} center>
+          <h2>File Transfer Request</h2>
+          <p>You have an incoming file transfer request. What would you like to do?</p>
+          <button className="button close" onClick={this.onCloseModal}>Reject</button>
+          <button className="button okay">Accept</button>
+        </Modal>
+      </div>
+    );
+  }
 }
