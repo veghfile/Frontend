@@ -6,6 +6,7 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
 import './style.css'
@@ -232,9 +233,17 @@ const Room = (props) => {
                             {/* {loading} */}
                   </div>
                   <div className="share-info">
-                    <h1>INFO</h1>
-                    <h2>You:- {amIHost?hostName:guestName}</h2><br/>
-                    <h2>{pubIp}</h2>
+                    <div className = "userInfo">
+                        <h1>INFO</h1>
+                        <h2>You:- {amIHost?hostName:guestName}</h2><br/>
+                        <h2>{pubIp}</h2>
+                    </div>
+                    <div className = "qrCont">
+                        <QRCode qrUrl  = "www.google.com"></QRCode>
+                    </div>
+                    <div className = "sharingCont">
+                            <p>Box3</p>
+                    </div>
                   </div>
                   <div className="footer">
                     <h1>Box 3</h1>

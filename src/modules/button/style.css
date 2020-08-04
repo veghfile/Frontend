@@ -4,7 +4,9 @@
   border-radius: 10px;
   border: none;
   margin: 10px;
+  transition: all ease 0.5s ;
 }
+
 
 .button-secondary{
   padding: 2%;

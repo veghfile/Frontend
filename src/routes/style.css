@@ -11,9 +11,28 @@
   padding: 5%;
 }
 .share-info {
+  display: grid;
+  grid-template-columns: 1fr ;
+  grid-template-rows: 1fr 2fr 1fr;
+  grid-template-areas: 
+  "con1"
+  "con2"
+  "con3";
   background-color: lightblue;
   grid-area: box2;
 
+}
+.userInfo{
+  border: solid 2px black;
+  grid-area: con1;
+  
+}
+.qrCont{
+  display: inline-grid;
+  grid-area: con2;
+}
+.sharingCont{
+  grid-area: con3;
 }
 .footer {
   background-color: lightgreen;
@@ -41,5 +60,12 @@ main{
     "box1"
     "box3";
     height: 100vh;
+  }
+  .share-info{
+    grid-template-columns: 1fr 1fr ;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+    "con1 con2"
+    "con3 con3";
   }
 }
