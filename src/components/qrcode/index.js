@@ -3,7 +3,6 @@ import QRCode from 'qrcode.react'
 import './style.css'
 
 const qrCode = (props) => {
-    const url = "www.google.com" //this is a dummy link
     const {qrUrl} = props
 
     return (

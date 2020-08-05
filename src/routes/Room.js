@@ -9,7 +9,8 @@ import {getip} from '../util/getip';
 import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
-import './style.css'
+import './style.css';
+import SocialButton from '../components/SocialSharing/index';
 
 
 const worker = new Worker("../worker.js");
@@ -243,7 +244,7 @@ const Room = (props) => {
                         <QRCode qrUrl  = {currentURL}></QRCode>
                     </div>
                     <div className = "sharingCont">
-                            <p>Box3</p>
+                            <SocialButton/>
                     </div>
                   </div>
                   <div className="footer">

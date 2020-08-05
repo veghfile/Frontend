@@ -3,16 +3,22 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border : solid black 0.2em;
-    border-radius: 10px;
+    border : solid black 1px;
+   
 
 }
 .qrCode canvas {
 
-    width: 30%;
+    width: 60%;
     
 }
 .qrCode{
     text-align: center;
     
+}
+.qrText{
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 2%;
+
 }

@@ -13,7 +13,7 @@
 .share-info {
   display: grid;
   grid-template-columns: 1fr ;
-  grid-template-rows: 1fr 2fr 1fr;
+  grid-template-rows: 0.5fr 2fr 0.5fr;
   grid-template-areas: 
   "con1"
   "con2"
@@ -30,6 +30,7 @@
 .qrCont{
   display: inline-grid;
   grid-area: con2;
+  padding : 5% 13%;
 }
 .sharingCont{
   grid-area: con3;
