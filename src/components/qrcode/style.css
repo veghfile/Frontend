@@ -1,11 +1,10 @@
 .qrContainer {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     border : solid black 1px;
-   
-
+    padding: calc(3px + 2vmin);
 }
 .qrCode canvas {
 
@@ -17,8 +16,31 @@
     
 }
 .qrText{
-    font-size: 2em;
     font-weight: bold;
     margin-top: 2%;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+.room-lable{
+    font-size: calc(10px + 2vmin);
+    color: #c3c3c3;
+}
+
+.room-ID{
+    font-size: calc(15px + 2vmin);
+}
+
+@media only screen and (max-width: 768px) {
+    .room-lable{
+        font-size: calc(10px + 1vmin);
+        color: #c3c3c3;
+    }
+    
+    .room-ID{
+        font-size: calc(15px + 1vmin);
+    }
+  }
+  

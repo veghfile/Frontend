@@ -237,7 +237,7 @@ const Room = (props) => {
                   <div className="share-info">
                     <div className = "userInfo">
                         <h1>INFO</h1>
-                        <h2>You:- {amIHost?hostName:guestName}</h2><br/>
+                        {/* <h2>You:- {amIHost?hostName:guestName}</h2><br/> */}
                         <h2>{pubIp}</h2>
                     </div>
                     <div className = "qrCont">

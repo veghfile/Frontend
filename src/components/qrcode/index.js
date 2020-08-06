@@ -10,7 +10,10 @@ const qrCode = (props) => {
              <div className = "qrCode">
              <QRCode value = {qrUrl}  size = "500"/>
              </div>
-             <div className = "qrText"><p>XYZ123</p></div>
+             <div className = "qrText">
+                 <p className="room-lable">room ID</p>
+                 <p className="room-ID">HappyDolphines</p>
+                 </div>
         </div>
     )
 }

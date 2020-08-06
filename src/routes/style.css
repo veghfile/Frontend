@@ -18,9 +18,9 @@
   "con1"
   "con2"
   "con3";
-  background-color: lightblue;
+  /* background-color: lightblue; */
   grid-area: box2;
-
+  padding: 5%;
 }
 .userInfo{
   border: solid 2px black;
@@ -30,9 +30,12 @@
 .qrCont{
   display: inline-grid;
   grid-area: con2;
-  padding : 5% 13%;
+
 }
 .sharingCont{
+  display: flex;
+    justify-content: center;
+    align-items: center;
   grid-area: con3;
 }
 .footer {
@@ -55,7 +58,7 @@ main{
   main{
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1.5fr 0.2fr;
+    grid-template-rows: 0.1fr 1.5fr 0.2fr;
     grid-template-areas: 
     "box2"
     "box1"
@@ -64,9 +67,10 @@ main{
   }
   .share-info{
     grid-template-columns: 1fr 1fr ;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 0.5fr;
     grid-template-areas: 
     "con1 con2"
     "con3 con3";
+    grid-gap: 2%;
   }
 }
