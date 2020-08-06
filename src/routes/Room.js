@@ -6,9 +6,11 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import {AvatarGen} from '../util/randomAvatarGen';
 import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
+import Avatar from '../components/avatarMain/index';
 import './style.css';
 import SocialButton from '../components/SocialSharing/index';
 
@@ -103,7 +105,7 @@ const Room = (props) => {
 
         //handling guest avatar creating logic here
         peer.on("signal", signal => {
-            let gname = Math.random()
+            let gname = Math.floor(Math.random() * 50) + 1
             socketRef.current.emit("sending signal", { userToSignal, callerID, signal,username:gname });
             setGuestName(gname)
         });
@@ -120,7 +122,7 @@ const Room = (props) => {
 
         //handling host avatar creating logic here
         peer.on("signal", signal => {
-            let hname = Math.random()
+            let hname = Math.floor(Math.random() * 50) + 1
             socketRef.current.emit("returning signal", { signal, callerID,username:hname });
             setamIHost(true)
             setHostName(hname)
@@ -236,8 +238,12 @@ const Room = (props) => {
                   </div>
                   <div className="share-info">
                     <div className = "userInfo">
-                        <h1>INFO</h1>
+                        <Avatar index={amIHost?hostName:guestName} >
+                            <p>You</p>
+                        </Avatar>
+                        {/* <h1>INFO</h1> */}
                         {/* <h2>You:- {amIHost?hostName:guestName}</h2><br/> */}
+                        {/* <h2>{AvatarGen()}</h2><br/> */}
                         <h2>{pubIp}</h2>
                     </div>
                     <div className = "qrCont">

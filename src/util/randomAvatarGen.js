@@ -22,7 +22,7 @@ import svg21 from '../components/static/avatars/21-gaudygoose.svg';
 import svg22 from '../components/static/avatars/22-leisurelylemur.svg';
 import svg23 from '../components/static/avatars/23-oddostrich.svg';
 import svg24 from '../components/static/avatars/24-ominousowl.svg';
-import svg25 from '../components/static/avatars/25-bipolarbear.svg';
+import svg25 from '../components/static/avatars/25-bipolarboar.svg';
 import svg26 from '../components/static/avatars/26-pickypenguin.svg';
 import svg27 from '../components/static/avatars/27-cageycamel.svg';
 import svg28 from '../components/static/avatars/28-rationalraccoon.svg';
@@ -248,5 +248,9 @@ let avatars = [{
   path:svg50,
   name:"Finicky Fox"
 }]
+
+export function AvatarGen (i){
+  return avatars[i]
+}
 
 

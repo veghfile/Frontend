@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import Usersvg from '../static/user.svg'
+import Avatar from '../avatar/index'
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
 import {BarLoader} from 'react-spinners';
@@ -31,12 +32,7 @@ function Filedropper(props) {
                                 </div>
                             </div>:
                             //add avatar module here
-                            <div className="peer-avatar ">
-                                <div className="flex-col-center">
-                                    <img src={Usersvg} />
-                                    <h2>{guestName}</h2>
-                                </div>
-                            </div>
+                            <Avatar index={guestName}/>
                             } 
                             <div className="privacy-cont">
                                 <img src={Lock} />

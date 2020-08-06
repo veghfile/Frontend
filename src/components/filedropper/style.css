@@ -113,6 +113,16 @@
   margin: 0.5rem;
 }
 
+@media only screen and (max-width: 768px) {
+  .input-cont p {
+    display: none;
+  }
+  .input-cont .button-primary {
+    padding: 15%;
+    min-width: calc(122px + 2vmin);
+  }
+}
+
 .privacy-cont {
   display: -webkit-box;
   display: -ms-flexbox;
