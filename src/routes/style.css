@@ -20,10 +20,9 @@
   "con3";
   /* background-color: lightblue; */
   grid-area: box2;
-  padding: 5%;
+  padding: 5% 13%;
 }
 .userInfo{
-  border: solid 2px black;
   grid-area: con1;
   
 }
@@ -67,10 +66,12 @@ main{
   }
   .share-info{
     grid-template-columns: 1fr 1fr ;
-    grid-template-rows: 1fr 0.5fr;
+    grid-template-rows: 4fr 0.5fr;
     grid-template-areas: 
     "con1 con2"
     "con3 con3";
     grid-gap: 2%;
+  padding: 5%;
+
   }
 }
