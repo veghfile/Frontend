@@ -1,0 +1,20 @@
+.button-container{
+  width: 35%;
+}
+
+.button-primary{
+  background-color: #EFE9F4;
+  padding: 4%;
+  width: 100%;
+  border-radius: 10px;
+  border: none;
+  margin: 10px 0;
+}
+
+.button-secondary{
+  padding: 2%;
+  width: 50%;
+  border-radius: 10px;
+  border: none;
+  margin: 10px 0;
+}
