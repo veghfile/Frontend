@@ -1,5 +1,5 @@
 let array = [];
-
+let progress = 0
 self.addEventListener("message", event => {  
     if (event.data === "download") {
         const blob = new Blob(array);
@@ -7,7 +7,7 @@ self.addEventListener("message", event => {
         array = [];
     }else if (event.data === "abort") {
         array = [];
-    }  else {
+    } else {
         array.push(event.data);        
     }
 })

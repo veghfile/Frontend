@@ -11,6 +11,8 @@ import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
 import Avatar from '../components/avatarMain/index';
+import {throttle} from 'lodash';
+import { debounce } from "debounce";
 import './style.css';
 import SocialButton from '../components/SocialSharing/index';
 
@@ -22,7 +24,8 @@ const Room = (props) => {
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
     const [amIHost, setamIHost] = useState(false);
-    const [isloading, setIsloading] = useState(0);
+    const [isloading, setIsloading] = useState(1);
+    const [maxLoad, setMaxLoad] = useState(0);
     const [hostName, setHostName] = useState("");
     const [guestName, setGuestName] = useState("");
     const [btnWait, setBtnWait] = useState(false);
@@ -37,7 +40,7 @@ const Room = (props) => {
     const peerRef = useRef();
     const fileNameRef = useRef("");
     const pendingOp = useRef("");
-    
+    let count = 0;
     const roomID = props.match.params.roomID;
     
     
@@ -70,9 +73,10 @@ const Room = (props) => {
             setHostName(payload.username)
             setConnection(true);
         });
-
+        
         //calling Download service worker
         worker.addEventListener("message", (e)=>down(e,fileNameRef.current,peerRef.current));
+        // worker.addEventListener("message", (e)=>setIsloading(e.data));
 
         socketRef.current.on("room full", () => {
             alert("room is full");
@@ -87,8 +91,7 @@ const Room = (props) => {
     }, []);
 
     function handleLeaving (){
-        console.log(pendingOp.current);
-        
+
         if(pendingOp.current){
             window.location.reload(false)
         }
@@ -128,7 +131,7 @@ const Room = (props) => {
             setHostName(hname)
         });
 
-        peer.on("data",handleReceivingData);
+        peer.on("data",(e)=>{handleReceivingData(e)});
         peer.signal(incomingSignal);
         setConnection(true);
         return peer;
@@ -136,7 +139,11 @@ const Room = (props) => {
 
     function handleReceivingData(data) {
         //todo convert to switch case
-        if(data.toString().includes("load")){
+        
+        if(data.toString().includes("maxProgress")){
+            const parsed = JSON.parse(data);
+            setMaxLoad(parsed.maxProgress) 
+        }else if(data.toString().includes("load")){
             setLoad(false)
             setBtnWait(true)            
         }else if(data.toString().includes("wait")){
@@ -144,17 +151,28 @@ const Room = (props) => {
         } else if (data.toString().includes("done") ) {
             setGotFile(true);
             setReceiver(false);
-            pendingOp.current = false    
             const parsed = JSON.parse(data);
+            pendingOp.current = false  ;
+            count = 0;
             fileNameRef.current = parsed.fileName;            
             const peer = peerRef.current;
-            peer.write(JSON.stringify({ load:true}));
+            peer.write(JSON.stringify({load:true}));
         }else{
+            // console.log(maxLoad);
+            if(Math.floor((count/maxLoad)*100)%10==0){
+                setIsloading(count=>count+1)
+                console.log(count);
+            }
             setReceiver(true)
             worker.postMessage(data);
         } 
+
         
     }
+
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+      }
 
     function download() {
         setGotFile(false);
@@ -183,6 +201,7 @@ const Room = (props) => {
         const peer = peerRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
+        peer.write(JSON.stringify({ maxProgress:file.size/65536}));
         pendingOp.current = true
         // let progress = 0
         reader.read().then(obj => {
@@ -195,9 +214,13 @@ const Room = (props) => {
             if (done) {
                 peer.write(JSON.stringify({ done: true, fileName: file.name}));
                 // setIsloading(progress)
+                count = 0;
                 return;
             }
-
+            
+            // peer.write(JSON.stringify({isload:true,count:count}));
+        
+            
             peer.write(value);
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
@@ -205,6 +228,8 @@ const Room = (props) => {
                 // setIsloading(progress++)
             })
         }
+        
+
     }
 
     function fileCallback(file){
@@ -226,11 +251,13 @@ const Room = (props) => {
                             fileCallback={fileCallback} 
                             wait={btnWait} 
                             setBtnWait={setBtnWait}
-                            load={load} 
+                            isloading={isloading} 
                             receiver={receiver}
                             setLoad={setLoad}
                             confirmSend={confirmSend}
                             sendConfirm={sendConfirm}
+                            maxLoad={maxLoad}
+                            load={load}
                             guestName={amIHost?guestName:hostName} 
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
