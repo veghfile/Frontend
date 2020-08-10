@@ -58,18 +58,16 @@ function Filedropper(props) {
                             load?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                    <p>Sending File</p>
-                                        <BarLoader load />
+                                        <p>Sending File</p>
+                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
                                     </div>
                                 </div>
                             :
                                 receiver?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                    <p>Receiving File</p>
-                                        {/* <BarLoader load /> */}
-                            {/* <CircleProgress percentage={Math.floor((isloading/maxLoad)*100)} /> */}
-                            <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
+                                        <p>Receiving File</p>
+                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
                                     </div>
                                 </div>                           
                             :
