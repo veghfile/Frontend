@@ -4,7 +4,7 @@ import UserSvg from '../static/user.svg'
 import './style.css'
 const Avatar = ({index,children,...other}) => {
   let UserInfo = AvatarGen(index)
-  console.log(UserInfo);
+
   
   return (
     <div className="peer-avatar-You">

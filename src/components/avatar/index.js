@@ -2,9 +2,7 @@ import React from 'react'
 import {AvatarGen} from '../../util/randomAvatarGen'
 import UserSvg from '../static/user.svg'
 const Avatar = ({index,children,...other}) => {
-  let UserInfo = AvatarGen(index)
-  console.log(UserInfo);
-  
+  let UserInfo = AvatarGen(index)  
   return (
     <div className="peer-avatar ">
     <div className="flex-col-center">

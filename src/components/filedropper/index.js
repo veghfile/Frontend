@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useDropzone} from 'react-dropzone';
+import {CircleProgress} from 'react-gradient-progress'
 import Usersvg from '../static/user.svg'
 import Avatar from '../avatar/index'
 import Lock from '../static/lock.svg'
@@ -9,7 +10,7 @@ import "./style.css";
 
 
 function Filedropper(props) {
-    const {fileCallback, wait, guestName, connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm} = props
+    const {fileCallback, wait, guestName, connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad} = props
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
         noClick: true,
@@ -57,16 +58,16 @@ function Filedropper(props) {
                             load?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                    <p>Sending File</p>
-                                        <BarLoader load />
+                                        <p>Sending File</p>
+                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
                                     </div>
                                 </div>
                             :
                                 receiver?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                    <p>Receiving File</p>
-                                        <BarLoader load />
+                                        <p>Receiving File</p>
+                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
                                     </div>
                                 </div>                           
                             :
@@ -91,6 +92,7 @@ function Filedropper(props) {
                                     </div>
                                 </div>
                             }
+
                     </>
             </div>
         </div>
