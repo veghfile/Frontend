@@ -15,6 +15,7 @@ import {throttle} from 'lodash';
 import { debounce } from "debounce";
 import './style.css';
 import SocialButton from '../components/SocialSharing/index';
+import Footer from '../components/footer/index'
 
 
 const worker = new Worker("../worker.js");
@@ -269,7 +270,7 @@ const Room = (props) => {
                     </div>
                   </div>
                   <div className="footer">
-                    <h1>Box 3</h1>
+                    <Footer></Footer>
                   </div>
                 </main>
 
