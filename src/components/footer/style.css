@@ -7,6 +7,7 @@
 }
 .logo{
     font-size: 1.5em;
+    margin : 5px;
     width: 5%;
 }
 .footerContainer{
@@ -34,15 +35,22 @@ p{
         align-items: center;
     }
     .linkContainer{
-        flex-direction: column;
         justify-content: center;
+        flex-direction: row;
         text-align: center;
-        margin: 0;
-    }
-    span{
-        display: none;
+        margin: auto;
+        font-size: 1em;
     }
     p{
         margin: 0.5ch;
+    }
+    .logo{
+        width: 20%;
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .logo{
+        width: 20%;
     }
 }
