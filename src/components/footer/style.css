@@ -1,0 +1,48 @@
+
+.linkContainer{
+    display: flex;
+    margin: 0 0 0 70px;
+    font-size: 1.2em;
+
+}
+.logo{
+    font-size: 1.5em;
+    width: 5%;
+}
+.footerContainer{
+        display: flex;
+        padding : 0.5% 5%;
+        justify-content: start;
+        align-items: center;
+        margin: 5px;
+}
+span {
+    margin: 5px;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+p{
+    text-align: center;
+}
+
+@media only screen and (max-width: 425px) {
+    .footerContainer {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .linkContainer{
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        margin: 0;
+    }
+    span{
+        display: none;
+    }
+    p{
+        margin: 0.5ch;
+    }
+}
