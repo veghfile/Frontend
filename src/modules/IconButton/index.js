@@ -1,10 +1,10 @@
 import React from 'react'
 import './style.css'
-const IconButton = ({svg}) => {
+const IconButton = ({svg,children,...other}) => {
     return (
         <div>
-            <button className="button-primary" type="button">
-                Share Link
+            <button {...other} className="button-primary" type="button">
+                {children?children:"Share Link"}
                 <img src = {svg}/>
             </button>
         </div>

@@ -1,0 +1,102 @@
+.qrBox {
+    position: relative;
+}
+#hiddeneye{ 
+    position: absolute;
+    z-index: 10;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#hiddeneye img {
+    width:  calc(100px + 2vmin);
+    padding:calc(5px + 1vmin);
+}
+#hiddeneye p {
+    border-top:3px solid white;
+    width: 50%;
+    text-align: center;
+    padding:calc(5px + 1vmin);
+    color:#fcfbfd;
+    font-weight: bold;
+    font-size:calc(15px + 1vmin) ;
+}
+
+.stackTop{
+    display: flex;
+    background: #a7a6a8;
+    justify-content: space-evenly; 
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 0%;
+    height: 100%;
+    flex-direction: column;
+    visibility: visible;
+    border : solid white 1px;
+    border-radius: 20px;
+}
+.stackTop .qrCode,.stackTop  .qrText{
+    filter: blur(10px);
+}
+.qrContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border : none;
+    border-radius: 20px;
+    padding: calc(3px + 2vmin);
+    height: 100%;
+}
+.button-primary {
+    padding: 10%;
+}
+
+.qrCode canvas {
+
+    width: 60%;
+    
+}
+.qrCode{
+    text-align: center;
+    
+}
+.qrCode img{
+    width: 70%;
+}
+.qrText{
+    font-weight: bold;
+    margin-top: 2%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.qrText{
+    width: 45%;
+}
+
+.room-lable{
+    font-size: calc(10px + 2vmin);
+    color: #c3c3c3;
+}
+
+.room-ID{
+    font-size: calc(15px + 2vmin);
+}
+
+p{
+    /* display: block !important;
+    text-align: center; */
+}
+
+@media only screen and (max-width: 768px) {
+        .public-box{
+            display: none;
+        }
+  }
+  
