@@ -1,0 +1,35 @@
+.socialSharing{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.button-container{
+    width: 35%;
+}
+
+.copyLink{
+    margin: 0px 7px;
+}
+.PrivateLink img{
+    width: 19% !important;
+}
+
+@media only screen and (min-width: 768px) {
+    .PrivateLink{
+        display: none;
+    }
+    .private-text{
+        display: none;
+    }
+}
+@media only screen and (max-width: 768px) {
+    button{
+        font-size:calc(3px + 2vmin) !important;
+    }
+    p{
+        text-align: center;
+        font-size:calc(3px + 2vmin) !important;
+        margin: 5px;
+    }
+}

@@ -9,18 +9,18 @@ import {getip} from '../util/getip';
 import {AvatarGen} from '../util/randomAvatarGen';
 import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
+import PrivateContainer from '../components/privateContainer/index';
 import FileModal from '../components/filemodal/index';
 import Avatar from '../components/avatarMain/index';
-import {throttle} from 'lodash';
-import { debounce } from "debounce";
 import './style.css';
-import SocialButton from '../components/SocialSharing/index';
+import { v1 as uuid } from "uuid";
 import Footer from '../components/footer/index'
+import SocialButton from '../components/SocialSharingPublic/index';
 
 
 const worker = new Worker("../worker.js");
 
-const Room = (props) => {
+const PublicRoom = (props) => {
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
@@ -42,8 +42,6 @@ const Room = (props) => {
     const fileNameRef = useRef("");
     const pendingOp = useRef("");
     let count = 0;
-    const roomID = props.match.params.roomID;
-    
     
     useEffect( async () => {
         if (!window.WritableStream) {
@@ -54,11 +52,7 @@ const Room = (props) => {
         // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
-        if(roomID == "public"){
             getip(setPubIp,socketRef.current)
-        } else {
-            socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
-        }
 
         socketRef.current.on("all users", users => {
             peerRef.current = createPeer(users[0], socketRef.current.id);
@@ -254,18 +248,16 @@ const Room = (props) => {
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
                   </div>
-                  <div className="share-info">
+                  <div className="public-info share-info ">
                     <div className = "userInfo">
                         <Avatar index={amIHost?hostName:guestName} >
-                            <p>You</p>
                         </Avatar>
-                        <h2>{pubIp}</h2>
                     </div>
                     <div className = "qrCont">
-                        <QRCode qrUrl  = {currentURL}></QRCode>
+                        <PrivateContainer {...props}/>       
                     </div>
                     <div className = "sharingCont">
-                            <SocialButton/>
+                    <SocialButton/>
                     </div>
                   </div>
                   <div className="footer">
@@ -277,4 +269,4 @@ const Room = (props) => {
     );
 };
 
-export default Room;
+export default PublicRoom;

@@ -97,6 +97,22 @@ main {
     height: calc(15rem + 2vmin);
     max-height: calc(300px + 2vmin) !important;
   }
+  .public-info {
+    -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+    -ms-grid-rows: 4fr 0.5fr;
+        grid-template-rows: 4fr 0.5fr;
+        grid-template-areas: "con1 con1" "con3 con3" !important;
+    grid-gap: 2%;
+    margin-bottom: 90px !important;
+    padding: 5%;
+    height: calc(10rem + 2vmin);
+    max-height: calc(218px + 2vmin) !important;
+  }
+  .public-info .peer-avatar-You {
+    margin-bottom: 2px;
+    padding-bottom: 1px;
+  }
   .dropper {
     max-height: calc(400px + 2vmin) !important;
     height: calc(400px + 2vmin);
