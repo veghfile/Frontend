@@ -21,6 +21,7 @@ import SocialButton from '../components/SocialSharingPublic/index';
 const worker = new Worker("../worker.js");
 
 const PublicRoom = (props) => {
+    const [peers, setPeers] = useState([]);
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
@@ -38,13 +39,11 @@ const PublicRoom = (props) => {
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
-    const peerRef = useRef();
+    const peerRef = useRef([]);
     const fileNameRef = useRef("");
     const pendingOp = useRef("");
     let count = 0;
-    
-    useEffect( ()=>{
-        (async () => {
+    useEffect( async () => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
@@ -55,18 +54,33 @@ const PublicRoom = (props) => {
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
 
-        socketRef.current.on("all users", users => {
-            peerRef.current = createPeer(users[0], socketRef.current.id);
-        });
-        
+            socketRef.current.on("all users", users => {
+                const peers = [];
+                users.forEach(userID => {
+                    const peer = createPeer(userID, socketRef.current.id);
+                    peersRef.current.push({
+                        peerID: userID,
+                        peer,
+                    })
+                    peers.push(peer);
+                })
+                setPeers(peers);
+            })
+       
         socketRef.current.on("user joined", payload => {
-            peerRef.current = addPeer(payload.signal, payload.callerID);
+            const peer = addPeer(payload.signal, payload.callerID);
+            peersRef.current.push({
+                peerID: payload.callerID,
+                peer,
+            })
+            setPeers(users => [...users, peer]);
             setGuestName(payload.username)
         });
 
         socketRef.current.on("receiving returned signal", payload => {
-            peerRef.current.signal(payload.signal);
-            setHostName(payload.username)
+            const item = peersRef.current.find(p => p.peerID === payload.id);
+            item.peer.signal(payload.signal);
+            // setHostName(payload.username)
             setConnection(true);
         });
         
@@ -81,7 +95,6 @@ const PublicRoom = (props) => {
             handleLeaving()
             setConnection(false);
         });
-    })()
     }, []);
 
     function handleLeaving (){
@@ -155,7 +168,7 @@ const PublicRoom = (props) => {
                 setIsloading(0)
                 fileNameRef.current = parsed.fileName;            
                 const peer = peerRef.current;
-                peer.write(JSON.stringify({load:true}));              
+                peer.forEach(item =>item.peer.write(JSON.stringify({load:true})));              
                 break;        
             default: 
                 setIsloading(count=>count+1)
@@ -177,7 +190,7 @@ const PublicRoom = (props) => {
         setIsloading(0)
         worker.postMessage("abort");
         const peer = peerRef.current;
-        peer.write(JSON.stringify({ wait:true}));
+        peer.forEach(item =>item.write(JSON.stringify({ wait:true})));
     }
 
     function sendConfirm (ans){
@@ -191,10 +204,11 @@ const PublicRoom = (props) => {
 
     function sendFile(file) {
         const peer = peerRef.current;
+        console.log(peerRef.current);
         const stream = file.stream();
         const reader = stream.getReader();
         setMaxLoad(Math.floor(file.size/65536))
-        peer.write(JSON.stringify({ maxProgress:file.size/65536}));
+        peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
         pendingOp.current = true
         setLoad(true)
         reader.read().then(obj => {
@@ -203,7 +217,7 @@ const PublicRoom = (props) => {
         
         function handlereading(done, value) {
             if (done) {
-                peer.write(JSON.stringify({ done: true, fileName: file.name}));
+                peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
                 count = 0;
                 return;
             }
@@ -211,7 +225,7 @@ const PublicRoom = (props) => {
             setIsloading(count=>count+1)
             
             
-            peer.write(value);
+            peersRef.current.forEach(item => item.peer.write(value));
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
             })
@@ -253,6 +267,7 @@ const PublicRoom = (props) => {
                     <div className = "userInfo">
                         <Avatar index={amIHost?hostName:guestName} >
                         </Avatar>
+                        {pubIp}
                     </div>
                     <div className = "qrCont">
                         <PrivateContainer {...props}/>       

@@ -13,5 +13,5 @@ export async function down(event, fname, pname) {
         await pipe(streamAsyncIterator(event.data.stream()), fileStream);
     }
     const peer = pname;
-    peer.write(JSON.stringify({wait: true}));
+    peer.forEach(item =>item.peer.write(JSON.stringify({wait: true})));
 }
