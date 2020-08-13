@@ -46,10 +46,12 @@
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    border : none;
     border-radius: 20px;
     padding: calc(3px + 2vmin);
     height: 100%;
+}
+.publicContainer{
+    border : none;
 }
 .button-primary {
     padding: 10%;
@@ -92,6 +94,15 @@
 p{
     /* display: block !important;
     text-align: center; */
+}
+
+.privateButton button{
+    background-color: #68C6A3;
+    color: white;
+}
+
+.privateButton img{
+    filter: invert(1);
 }
 
 @media only screen and (max-width: 768px) {

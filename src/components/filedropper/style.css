@@ -56,8 +56,9 @@
 .peer-avatar p {
   text-align: center;
   padding: 5px;
-  font-size: 1rem;
+  font-size: 1.5em;
   margin: 0 5ch;
+  color: #707070;
 }
 
 .file-container {
@@ -86,25 +87,31 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  font-size: 1.3em !important;
+  width: 35%;
 }
 
 .input-cont .button-primary {
   background: #16BAC5;
-  padding: 8%;
+  color: white;
+  max-width: 200px;
+  padding: 4%;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 5px;
   border: none;
   margin: 10px;
 }
 
-.input-cont .button-primary:hover {
-  background: #F4442E;
+.input-cont .focusBtn {
+  background: #68C6A3;
+  color: white;
 }
 
 .input-cont .button-secondary {
-  padding: 2%;
+  min-width: 90px;
+  padding: 5%;
   width: 50%;
-  border-radius: 10px;
+  border-radius: 5px;
   border: none;
   margin: 10px;
 }
@@ -114,9 +121,6 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .input-cont p {
-    display: none;
-  }
   .input-cont .button-primary {
     padding: 15%;
     min-width: calc(122px + 2vmin);
@@ -133,7 +137,7 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 35px;
 }
 
 .privacy-cont img {

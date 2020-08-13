@@ -43,13 +43,14 @@ const PublicRoom = (props) => {
     const pendingOp = useRef("");
     let count = 0;
     
-    useEffect( async () => {
+    useEffect( ()=>{
+        (async () => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
@@ -80,14 +81,14 @@ const PublicRoom = (props) => {
             handleLeaving()
             setConnection(false);
         });
-
+    })()
     }, []);
 
     function handleLeaving (){
 
-        if(pendingOp.current){
-            window.location.reload(false)
-        }
+        // if(pendingOp.current){
+        //     window.location.reload(false)
+        // }
         setReceiver(false)
         setGotFile(false);
         worker.postMessage("abort");

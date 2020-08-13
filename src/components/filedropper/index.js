@@ -5,7 +5,8 @@ import Usersvg from '../static/user.svg'
 import Avatar from '../avatar/index'
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
-import {BarLoader} from 'react-spinners';
+import { Progress } from 'react-sweet-progress';
+import "react-sweet-progress/lib/style.css";
 import "./style.css";
 
 
@@ -45,7 +46,7 @@ function Filedropper(props) {
                                     <div className="input-cont">
                                     <p>Do you want to send ?</p>
                                     <div className="confirm-inputs">
-                                    <Button className="button-secondary" type="Button" onClick={()=>sendConfirm(true)}>
+                                    <Button className="button-secondary focusBtn" type="Button" onClick={()=>sendConfirm(true)}>
                                            Send
                                     </Button>
                                     <Button className="button-secondary" type="Button" onClick={()=>sendConfirm(false)}>
@@ -59,7 +60,23 @@ function Filedropper(props) {
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <p>Sending File</p>
-                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
+                                        <Progress
+                                         percent={Math.floor((isloading/maxLoad)*100)}
+                                        theme={{
+                                            success: {
+                                            symbol: '🏄‍',
+                                            color: 'rgb(223, 105, 180)'
+                                            },
+                                            active: {
+                                            symbol: '😀',
+                                            color: '#fbc630'
+                                            },
+                                            default: {
+                                            symbol: '😱',
+                                            color: '#fbc630'
+                                            }
+                                        }}
+                                        />
                                     </div>
                                 </div>
                             :
@@ -67,7 +84,23 @@ function Filedropper(props) {
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <p>Receiving File</p>
-                                        <progress id="file" value={Math.floor((isloading/maxLoad)*100)} max="100"> </progress>
+                                        <Progress
+                                         percent={Math.floor((isloading/maxLoad)*100)}
+                                        theme={{
+                                            success: {
+                                            symbol: '🏄‍',
+                                            color: 'rgb(223, 105, 180)'
+                                            },
+                                            active: {
+                                            symbol: '😀',
+                                            color: '#fbc630'
+                                            },
+                                            default: {
+                                            symbol: '😱',
+                                            color: '#fbc630'
+                                            }
+                                        }}
+                                        />
                                     </div>
                                 </div>                           
                             :

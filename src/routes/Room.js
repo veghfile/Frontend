@@ -45,7 +45,8 @@ const Room = (props) => {
     const roomID = props.match.params.roomID;
     
     
-    useEffect( async () => {
+    useEffect( ()=>{
+        (async () => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
@@ -54,12 +55,8 @@ const Room = (props) => {
         // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
-        if(roomID == "public"){
-            getip(setPubIp,socketRef.current)
-        } else {
-            socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
-        }
-
+        socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
+        
         socketRef.current.on("all users", users => {
             peerRef.current = createPeer(users[0], socketRef.current.id);
         });
@@ -86,7 +83,7 @@ const Room = (props) => {
             handleLeaving()
             setConnection(false);
         });
-
+    })()
     }, []);
 
     function handleLeaving (){

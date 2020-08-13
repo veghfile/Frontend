@@ -25,12 +25,12 @@ const PrivateContainer = (props) => {
 
     return (
         <div className = "qrBox public-box">
-                <div className = "qrContainer">
+                <div className = "qrContainer publicContainer">
                     <div className = "qrCode" >
                         <img src={publicRoom} />
                     <p style={{ display: "block",textAlign: "center"}}>Private rooms can only be accessed by the second device using a link or QR Code. You do not need to be on the same network.</p>
                     </div>
-                    <div className = "qrText">
+                    <div className = "qrText privateButton">
                     <IconButton onClick={()=>create()} svg = {Lock}>Private Room</IconButton>
                     </div>
                  </div>
