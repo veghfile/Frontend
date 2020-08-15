@@ -27,8 +27,8 @@ const Room = (props) => {
     const [amIHost, setamIHost] = useState(false);
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
-    const [hostName, setHostName] = useState("");
-    const [guestName, setGuestName] = useState("");
+    const [hostName, setHostName] = useState(0);
+    const [userNames, setUserNames] = useState([]);
     const [btnWait, setBtnWait] = useState(false);
     const [confirmSend, setConfirmSend] = useState(false);
     const [load, setLoad] = useState(false);
@@ -43,7 +43,7 @@ const Room = (props) => {
     const pendingOp = useRef("");
     let count = 0;
     const roomID = props.match.params.roomID;
-    
+    let flag = false
     
     useEffect( ()=>{
         (async () => {
@@ -58,17 +58,23 @@ const Room = (props) => {
         socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
         
         socketRef.current.on("all users", users => {
-            peerRef.current = createPeer(users[0], socketRef.current.id);
+            peerRef.current = createPeer(users.usersInThisRoom[0], socketRef.current.id);
         });
+ 
+        socketRef.current.on("usernames", users => {
+            setUserNames(users)
+            if(!flag){
+                setHostName(users[users.length-1])
+                flag = true
+            }
+         })
         
         socketRef.current.on("user joined", payload => {
             peerRef.current = addPeer(payload.signal, payload.callerID);
-            setGuestName(payload.username)
         });
 
         socketRef.current.on("receiving returned signal", payload => {
             peerRef.current.signal(payload.signal);
-            setHostName(payload.username)
             setConnection(true);
         });
         
@@ -104,9 +110,7 @@ const Room = (props) => {
 
         //handling guest avatar creating logic here
         peer.on("signal", signal => {
-            let gname = Math.floor(Math.random() * 50) + 1
-            socketRef.current.emit("sending signal", { userToSignal, callerID, signal,username:gname });
-            setGuestName(gname)
+            socketRef.current.emit("sending signal", { userToSignal, callerID, signal});
         });
 
         peer.on("data", handleReceivingData);
@@ -121,10 +125,7 @@ const Room = (props) => {
 
         //handling host avatar creating logic here
         peer.on("signal", signal => {
-            let hname = Math.floor(Math.random() * 50) + 1
-            socketRef.current.emit("returning signal", { signal, callerID,username:hname });
-            setamIHost(true)
-            setHostName(hname)
+            socketRef.current.emit("returning signal", { signal, callerID });
         });
 
         peer.on("data",(e)=>{handleReceivingData(e)});
@@ -247,16 +248,16 @@ const Room = (props) => {
                             sendConfirm={sendConfirm}
                             maxLoad={maxLoad}
                             load={load}
-                            guestName={amIHost?guestName:hostName} 
+                            position = {hostName}
+                            users = {userNames}
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
                   </div>
                   <div className="share-info">
                     <div className = "userInfo">
-                        <Avatar index={amIHost?hostName:guestName} >
+                        <Avatar index={hostName} >
                             <p>You</p>
                         </Avatar>
-                        <h2>{pubIp}</h2>
                     </div>
                     <div className = "qrCont">
                         <QRCode qrUrl  = {currentURL}></QRCode>

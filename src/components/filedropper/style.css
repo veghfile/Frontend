@@ -41,10 +41,21 @@
           flex-direction: row;
 }
 
-.peer-avatar {
+.avatar-wrapper {
+  width: inherit;
+  height: inherit;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
+}
+
+.peer-avatar {
   padding-bottom: 4ch;
 }
 

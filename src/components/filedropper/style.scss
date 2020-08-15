@@ -23,8 +23,15 @@
   flex-direction: row;
 }
 
-.peer-avatar {
+.avatar-wrapper{
+  width: inherit;
+  height: inherit;
+  display: flex;
+  justify-content: center;
   align-items: flex-end;
+}
+
+.peer-avatar {
   padding-bottom: 4ch;
 
   img {
