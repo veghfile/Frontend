@@ -55,24 +55,26 @@ const PublicRoom = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
            
             socketRef.current.on("all users", users => {
                 const peers = [];
-                users.usersInThisRoom.forEach((userID) => {
+                users.usersInThisRoom.forEach((userID,index) => {
                     const peer = createPeer(userID, socketRef.current.id);
                     peersRef.current.push({
                         peerID: userID,
                         peer,
+                        name:users.usersNamesInThisRoom[index]
                     })
                     peers.push(peer);
                 })
                 if(!flag){
-                    setHostName(users.usersNamesInThisRoom[users.usersNamesInThisRoom.length-1])
+                    setHostName(users.usersNamesInThisRoom[users.usersNamesInThisRoom.length-1].name)
+                    setPosition(users.usersNamesInThisRoom[users.usersNamesInThisRoom.length-1].id)
                     flag = true;
                 }
                 setPeers(peers);
@@ -81,9 +83,10 @@ const PublicRoom = (props) => {
 
             socketRef.current.on("usernames", users => {
                setUserNames(users)
-               inRoomUsers.current = users
+               console.log(users);
                if(!flag){
-                   setHostName(users[users.length-1])
+                   setHostName(users[users.length-1].name)
+                   setPosition(users[users.length-1].name.id)
                    flag = true
                }
             })
@@ -159,7 +162,6 @@ const PublicRoom = (props) => {
     }
     function handleReceivingData(data) {
         let parsed
-        parsed = JSON.parse(data);
         let dataString = data.toString()
         switch (true) {
             case dataString.includes("maxProgress"):
@@ -177,11 +179,15 @@ const PublicRoom = (props) => {
                 setGotFile(true);
                 setReceiver(false);
                 parsed = JSON.parse(data);
-                peersRef.current.forEach(item =>item.peer.write(JSON.stringify({load:true})));              
-                pendingOp.current = false  ;
+                pendingOp.current = false;
                 count = 0;
                 setIsloading(0)
-                fileNameRef.current = parsed.fileName;            
+                fileNameRef.current = parsed.fileName;      
+                Promise.resolve()
+                .then(() => 
+                peersRef.current.forEach(item =>item.peer.write(JSON.stringify({load:true})))
+                )
+                .catch(console.log)      
                 break;        
             default: 
                 setIsloading(count=>count+1)
@@ -204,7 +210,7 @@ const PublicRoom = (props) => {
         count = 0;
         setIsloading(0)
         worker.postMessage("abort");
-        peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ wait:true})));
+        // peersRef.current.forEach(item =>item.peer.end(JSON.stringify({ wait:true})));
     }
 
     function sendConfirm (ans){
@@ -221,7 +227,12 @@ const PublicRoom = (props) => {
         const stream = file.stream();
         const reader = stream.getReader();
         setMaxLoad(Math.floor(file.size/65536))
+        // console.log(peersRef.current);
+        Promise.resolve()
+        .then(() => 
         peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
+        )
+        .catch(console.log)
         pendingOp.current = true
         setLoad(true)
         reader.read().then(obj => {
@@ -261,7 +272,6 @@ const PublicRoom = (props) => {
                             <Filedropper 
                             connectionEstablished={connectionEstablished} 
                             fileCallback={fileCallback} 
-                            wait={btnWait} 
                             setBtnWait={setBtnWait}
                             isloading={isloading} 
                             receiver={receiver}

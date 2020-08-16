@@ -11,7 +11,7 @@ import "./style.css";
 
 
 function Filedropper(props) {
-    const {fileCallback, wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position} = props
+    const {fileCallback, wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position,peers} = props
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
         noClick: true,
@@ -35,7 +35,7 @@ function Filedropper(props) {
                             </div>:
                             //add avatar module here
                             <div className="avatar-wrapper">
-                            {users?users.map(item => item!=position?<Avatar index={item}/>:null):null}
+                            {users?users.map((item,index) => item.name!=position?<Avatar nameID={item.id}  index={item.name}/>:null):<Avatar style={{display:"none"}}/>}
                             </div>
                             } 
                             <div className="privacy-cont">
