@@ -25,6 +25,7 @@ const Room = (props) => {
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
     const [amIHost, setamIHost] = useState(false);
+    const [position, setPosition] = useState(0);
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
     const [hostName, setHostName] = useState(0);
@@ -63,8 +64,10 @@ const Room = (props) => {
  
         socketRef.current.on("usernames", users => {
             setUserNames(users)
+            console.log(users);
             if(!flag){
                 setHostName(users[users.length-1])
+                setPosition(users[users.length-1])
                 flag = true
             }
          })
@@ -244,6 +247,7 @@ const Room = (props) => {
                             isloading={isloading} 
                             receiver={receiver}
                             setLoad={setLoad}
+                            position = {hostName}
                             confirmSend={confirmSend}
                             sendConfirm={sendConfirm}
                             maxLoad={maxLoad}

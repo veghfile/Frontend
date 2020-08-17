@@ -250,7 +250,7 @@ let avatars = [{
 }]
 
 export function AvatarGen (i){
-  // console.log("hehe",i);
+
   return avatars[i]
 }
 

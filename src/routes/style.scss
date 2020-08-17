@@ -111,4 +111,8 @@ main {
     max-height: calc(400px + 2vmin) !important;
     height: calc(400px + 2vmin);
   }
+  .public-drop{
+    max-height: calc(800px + 2vmin) !important;
+    height: max-content;
+  }
 }

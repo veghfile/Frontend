@@ -8,9 +8,10 @@ import {down} from '../util/downloader';
 import {getip} from '../util/getip';
 import {AvatarGen} from '../util/randomAvatarGen';
 import QRCode from '../components/qrcode/index';
-import Filedropper from '../components/filedropper/index';
+import Filedropper from '../components/filedropper_Public/index';
 import PrivateContainer from '../components/privateContainer/index';
 import FileModal from '../components/filemodal/index';
+import ErrorFileModal from '../components/errorfilemodal/index';
 import Avatar from '../components/avatarMain/index';
 import './style.css';
 import { v1 as uuid } from "uuid";
@@ -25,6 +26,7 @@ const PublicRoom = (props) => {
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
+    const [error, setError] = useState(false);
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
     const [hostName, setHostName] = useState(0);
@@ -34,19 +36,22 @@ const PublicRoom = (props) => {
     const [confirmSend, setConfirmSend] = useState(false);
     const [load, setLoad] = useState(false);
     const [receiver, setReceiver] = useState(false);
+    const [checkReset, setCheckReset] = useState(false);
+    const [checked, setChecked] = useState(false);
     const [pubIp , setPubIp] = useState("")
-    const [currentURL , setCurrentURL] = useState("")
-    const [users , setUsers] = useState([]);
+    const [users , setUsers] = useState();
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
     const peerRef = useRef([]);
     const inRoomUsers = useRef([]);
     const fileNameRef = useRef("");
+    const uniqueUserref = useRef("hehe");
     const pendingOp = useRef("");
     let count = 0;
-    let flag = false
-    let guestPeers
+    let flag = false;
+    let array = new Set()
+    let guestPeers = []
     
 
     useEffect( ()=>{
@@ -54,7 +59,6 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        setCurrentURL(window.location.href)
         // socketRef.current = io("https://p2p-dev.herokuapp.com/");
         socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
@@ -72,6 +76,7 @@ const PublicRoom = (props) => {
                     })
                     peers.push(peer);
                 })
+               setCheckReset(true)
                 if(!flag){
                     setHostName(users.usersNamesInThisRoom[users.usersNamesInThisRoom.length-1].name)
                     setPosition(users.usersNamesInThisRoom[users.usersNamesInThisRoom.length-1].id)
@@ -83,7 +88,8 @@ const PublicRoom = (props) => {
 
             socketRef.current.on("usernames", users => {
                setUserNames(users)
-               console.log(users);
+               inRoomUsers.current = users
+               setCheckReset(true)
                if(!flag){
                    setHostName(users[users.length-1].name)
                    setPosition(users[users.length-1].name.id)
@@ -97,6 +103,7 @@ const PublicRoom = (props) => {
                     peer,
                 })
                 setPeers(users => [...users, peer]);
+               setCheckReset(true)
         });
 
         socketRef.current.on("receiving returned signal", payload => {
@@ -122,7 +129,8 @@ const PublicRoom = (props) => {
         if(inRoomUsers.current.length<2){
         if(pendingOp.current){
                     window.location.reload(false)
-        }                   
+        }     
+            
             setConnection(false);
             setReceiver(false)
             setGotFile(false);
@@ -187,7 +195,7 @@ const PublicRoom = (props) => {
                 .then(() => 
                 peersRef.current.forEach(item =>item.peer.write(JSON.stringify({load:true})))
                 )
-                .catch(console.log)      
+                .catch(console.log)
                 break;        
             default: 
                 setIsloading(count=>count+1)
@@ -232,7 +240,12 @@ const PublicRoom = (props) => {
         .then(() => 
         peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
         )
-        .catch(console.log)
+        .catch(setError(true))
+
+        let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
+        peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
+        setCheckReset(true)
+        console.log(checked);
         pendingOp.current = true
         setLoad(true)
         reader.read().then(obj => {
@@ -241,13 +254,13 @@ const PublicRoom = (props) => {
         
         function handlereading(done, value) {
             if (done) {
-                peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
+                peersToSend.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
                 count = 0;
                 return;
             }
             
             setIsloading(count=>count+1)
-            peersRef.current.forEach(item => item.peer.write(value));
+            peersToSend.forEach(item => item.peer.write(value));
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
             })
@@ -261,6 +274,20 @@ const PublicRoom = (props) => {
         setConfirmSend(true)
     }
 
+    function peersAddCallback(peers){
+        array.add(peers,peers)
+        uniqueUserref.current = array    
+    }
+
+    function peersRemoveCallback(peers){
+        array.delete(peers)
+        uniqueUserref.current = array
+    }
+
+    function checkCallback(){
+        setCheckReset(false)
+    }
+
 
 //TODO code splitting components
 
@@ -268,7 +295,7 @@ const PublicRoom = (props) => {
     return (
         <>
                 <main>
-                  <div className="dropper">
+                  <div className="dropper public-drop">
                             <Filedropper 
                             connectionEstablished={connectionEstablished} 
                             fileCallback={fileCallback} 
@@ -278,12 +305,20 @@ const PublicRoom = (props) => {
                             setLoad={setLoad}
                             confirmSend={confirmSend}
                             sendConfirm={sendConfirm}
+                            checked={checked}
+                            setChecked={setChecked}
                             maxLoad={maxLoad}
                             load={load}
                             position = {hostName}
                             users = {userNames}
+                            checkReset={checkReset}
+                            checkCallback={checkCallback}
+                            setPeers={peersAddCallback}
+                            delPeers={peersRemoveCallback}
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
+                            {error?<ErrorFileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
+                            
                   </div>
                   <div className="public-info share-info ">
                     <div className = "userInfo">

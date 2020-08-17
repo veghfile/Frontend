@@ -5,7 +5,7 @@ const Avatar = ({index,children,nameID,...other}) => {
   let UserInfo = AvatarGen(index)  
 
   return (
-    <div id={nameID} className="peer-avatar ">
+    <div id={nameID} name={index} className="peer-avatar ">
     <div className="flex-col-center">
         <img src={UserInfo?UserInfo.path:UserSvg} />
         <div className="userInfo">

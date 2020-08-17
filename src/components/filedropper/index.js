@@ -3,15 +3,15 @@ import {useDropzone} from 'react-dropzone';
 import {CircleProgress} from 'react-gradient-progress'
 import Usersvg from '../static/user.svg'
 import Avatar from '../avatar/index'
+import AvatarSelector from '../avatarSelector/index'
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
 import { Progress } from 'react-sweet-progress';
-import "react-sweet-progress/lib/style.css";
 import "./style.css";
 
 
 function Filedropper(props) {
-    const {fileCallback, wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position,peers} = props
+    const {fileCallback,wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position} = props
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
         noClick: true,
@@ -34,8 +34,8 @@ function Filedropper(props) {
                                 </div>
                             </div>:
                             //add avatar module here
-                            <div className="avatar-wrapper">
-                            {users?users.map((item,index) => item.name!=position?<Avatar nameID={item.id}  index={item.name}/>:null):<Avatar style={{display:"none"}}/>}
+                            <div className="avatar-wrapper"> 
+                            {users.map((item,index) => item!=position?<Avatar nameID={item}  index={item}/>:null)}
                             </div>
                             } 
                             <div className="privacy-cont">

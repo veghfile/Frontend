@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "https://p2p-dev.herokuapp.com/",
   "dependencies": {
+    "@mdi/font": "^5.5.55",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -11,6 +12,8 @@
     "buffer": "^5.6.0",
     "debounce": "^1.2.0",
     "lodash": "^4.17.19",
+    "pretty-checkbox": "^3.0.3",
+    "pretty-checkbox-react": "^2.0.0",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
