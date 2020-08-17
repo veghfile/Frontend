@@ -1,0 +1,41 @@
+.selector-wrapper {
+  border: 3px solid #C7C7C7;
+  border-radius: 10px;
+  padding: 1.5% 1.5% 1.5% 1.5%;
+  margin: 2%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  width: 40%;
+  max-width: 230px;
+}
+
+.selector-wrapper .peer-avatar img {
+  width: 35%;
+}
+
+@media only screen and (max-width: 768px) {
+  .selector-wrapper .userInfo {
+    font-size: calc(2px + 2vmin);
+  }
+}
+
+.selector-wrapper .pretty {
+  font-size: calc(14px + 2vmin);
+  margin-right: 0.3em;
+}
+
+.selector-wrapper .pretty.p-default input:checked ~ .state label:after {
+  background-color: #16BAC5 !important;
+}
+/*# sourceMappingURL=style.css.map */

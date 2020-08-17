@@ -1,0 +1,28 @@
+.button {
+  padding: 0.5em 1em;
+  margin-top: 2em;
+  margin-right: 0.8em;
+  border-radius: 5%;
+  cursor: pointer;
+}
+
+.close {
+  border:solid 1px #9a9a9a;
+  color: #9a9a9a;
+  background: none;
+}
+
+.okay {
+  background-color: #16BAC5;
+  color: black;
+  border: none;
+  font-weight: 700;
+}
+
+/* h2 {
+  color: white;
+}
+
+p {
+  color: white;
+} */
