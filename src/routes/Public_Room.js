@@ -60,7 +60,7 @@ const PublicRoom = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        socketRef.current = io("http://localhost:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
