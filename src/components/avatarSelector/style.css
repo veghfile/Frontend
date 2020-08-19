@@ -25,6 +25,9 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .selector-wrapper {
+    max-height: 200px;
+  }
   .selector-wrapper .userInfo {
     font-size: calc(2px + 2vmin);
   }

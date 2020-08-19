@@ -8,6 +8,8 @@ import {down} from '../util/downloader';
 import {getip} from '../util/getip';
 import {AvatarGen} from '../util/randomAvatarGen';
 import QRCode from '../components/qrcode/index';
+import axios from 'axios';
+import codec from 'string-codec'
 import Filedropper from '../components/filedropper_Public/index';
 import PrivateContainer from '../components/privateContainer/index';
 import FileModal from '../components/filemodal/index';
@@ -17,6 +19,9 @@ import './style.css';
 import { v1 as uuid } from "uuid";
 import Footer from '../components/footer/index'
 import SocialButton from '../components/SocialSharingPublic/index';
+import { transitions, positions, Provider as AlertProvider,types } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+
 
 
 const worker = new Worker("../worker.js");
@@ -27,6 +32,7 @@ const PublicRoom = (props) => {
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
     const [error, setError] = useState(false);
+    const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity kindly refresh the page or try after a while..");
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
     const [hostName, setHostName] = useState(0);
@@ -52,15 +58,25 @@ const PublicRoom = (props) => {
     let flag = false;
     let array = new Set()
     let guestPeers = []
+    const roomID = "public";
     
+    const options = {
+        // you can also just use 'bottom center'
+        position: positions.BOTTOM_CENTER,
+        timeout: 5000,
+        offset: '30px',
+        // you can also just use 'scale'
+        transition: transitions.SCALE,
+        type: types.SUCCESS
+      }
 
     useEffect( ()=>{
         (async () => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
@@ -126,11 +142,11 @@ const PublicRoom = (props) => {
     }, []);
     
     function handleLeaving (){
-        if(inRoomUsers.current.length<2){
         if(pendingOp.current){
-                    window.location.reload(false)
-        }     
-            
+          setError(true)
+          setErrorMssg("User Left The file Might be Coruptted.")
+        }   
+        if(inRoomUsers.current.length<2){            
             setConnection(false);
             setReceiver(false)
             setGotFile(false);
@@ -142,6 +158,7 @@ const PublicRoom = (props) => {
         const peer = new Peer({
             initiator: true,
             trickle: false,
+            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
         });
 
         //handling guest avatar creating logic here
@@ -156,6 +173,7 @@ const PublicRoom = (props) => {
         const peer = new Peer({
             initiator: false,
             trickle: false,
+            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
         });
 
         //handling host avatar creating logic here
@@ -194,8 +212,7 @@ const PublicRoom = (props) => {
                 Promise.resolve()
                 .then(() => 
                 peersRef.current.forEach(item =>item.peer.write(JSON.stringify({load:true})))
-                )
-                .catch(console.log)
+                ).catch(console.log)
                 break;        
             default: 
                 setIsloading(count=>count+1)
@@ -230,24 +247,37 @@ const PublicRoom = (props) => {
         }
     }
 
-    function sendFile(file) {
+    async function sendFile(file) {
         const peer = peersRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
+
+        if(file.size > 11000000){
+            setErrorMssg("The App is still in Beta. Kindly Share files of size bellow 1GB.")
+            setError(true)
+            return
+        }
+
         setMaxLoad(Math.floor(file.size/65536))
-        // console.log(peersRef.current);
         Promise.resolve()
         .then(() => 
         peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
         )
         .catch(setError(true))
 
+        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+            "roomID":roomID,
+            data:file.size,
+            UserID:hostName,
+            PublicIP:pubIp
+          })
+
         let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
         peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
         setCheckReset(true)
-        console.log(checked);
         pendingOp.current = true
         setLoad(true)
+
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
         });
@@ -255,6 +285,7 @@ const PublicRoom = (props) => {
         function handlereading(done, value) {
             if (done) {
                 peersToSend.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
+                setLoad(false)
                 count = 0;
                 return;
             }
@@ -293,7 +324,7 @@ const PublicRoom = (props) => {
 
    
     return (
-        <>
+        <AlertProvider template={AlertTemplate} {...options}>
                 <main>
                   <div className="dropper public-drop">
                             <Filedropper 
@@ -317,7 +348,7 @@ const PublicRoom = (props) => {
                             delPeers={peersRemoveCallback}
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
-                            {error?<ErrorFileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
+                            {error?<ErrorFileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} >{errorMssg}</ErrorFileModal>:null}
                             
                   </div>
                   <div className="public-info share-info ">
@@ -328,10 +359,10 @@ const PublicRoom = (props) => {
 
                     </div>
                     <div className = "qrCont">
-                        <PrivateContainer {...props}/>       
+                        <PrivateContainer {...props} />       
                     </div>
                     <div className = "sharingCont">
-                    <SocialButton/>
+                    <SocialButton params={window.location.href}/>
                     </div>
                   </div>
                   <div className="footer">
@@ -339,7 +370,7 @@ const PublicRoom = (props) => {
                   </div>
                 </main>
 
-        </>
+        </AlertProvider>
     );
 };
 

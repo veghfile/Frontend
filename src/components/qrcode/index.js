@@ -4,7 +4,7 @@ import './style.css'
 import hidden from './../static/hidden.svg'
 
 const qrCode = (props) => {
-    const {qrUrl} = props
+    const {qrUrl,params} = props
 
     const showQr = () =>{
        let qr = document.getElementById("qrBlur").style.visibility
@@ -25,7 +25,7 @@ const qrCode = (props) => {
                     </div>
                     <div className = "qrText">
                         <p className="room-lable">room ID</p>
-                        <p className="room-ID">HappyDolphines</p>
+                        <p className="room-ID">{params}</p>
                     </div>
                  </div>
                 <div className = "stackTop" id = "qrBlur" onClick = {showQr}>
@@ -38,7 +38,7 @@ const qrCode = (props) => {
                     </div>
                     <div className = "qrText">
                         <p className="room-lable">room ID</p>
-                        <p className="room-ID">HappyDolphines</p>
+                        <p className="room-ID">{params}</p>
                     </div>
                 </div>
         </div>
