@@ -35,7 +35,7 @@ const PublicRoom = (props) => {
     const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity kindly refresh the page or try after a while..");
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
-    const [hostName, setHostName] = useState(0);
+    const [hostName, setHostName] = useState(51);
     const [position, setPosition] = useState(0);
     const [userNames, setUserNames] = useState([]);
     const [btnWait, setBtnWait] = useState(false);
@@ -157,8 +157,7 @@ const PublicRoom = (props) => {
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
             initiator: true,
-            trickle: false,
-            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
+            trickle: false
         });
 
         //handling guest avatar creating logic here
@@ -173,7 +172,6 @@ const PublicRoom = (props) => {
         const peer = new Peer({
             initiator: false,
             trickle: false,
-            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
         });
 
         //handling host avatar creating logic here
@@ -325,7 +323,8 @@ const PublicRoom = (props) => {
    
     return (
         <AlertProvider template={AlertTemplate} {...options}>
-                <main>
+           
+                <main exit={{ opacity: 0 }}>
                   <div className="dropper public-drop">
                             <Filedropper 
                             connectionEstablished={connectionEstablished} 
@@ -365,10 +364,11 @@ const PublicRoom = (props) => {
                     <SocialButton params={window.location.href}/>
                     </div>
                   </div>
-                  <div className="footer">
+                  <div className="footer" >
                     <Footer></Footer>
                   </div>
                 </main>
+               
 
         </AlertProvider>
     );

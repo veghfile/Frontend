@@ -8,7 +8,7 @@ import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
 import { Progress } from 'react-sweet-progress';
 import "./style.css";
-
+import {motion} from 'framer-motion';
 
 function Filedropper(props) {
     const {fileCallback,wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position} = props
@@ -23,7 +23,7 @@ function Filedropper(props) {
     });
 
     return (
-        <div className="container">
+        <motion.div className="container" initial = {{x : -1000 , opacity  : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.3}}>
             <div {...getRootProps({className: 'dropzone'})}>
                  <>
                         {!connectionEstablished?
@@ -130,7 +130,7 @@ function Filedropper(props) {
 
                     </>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

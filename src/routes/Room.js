@@ -81,7 +81,7 @@ const Room = (props) => {
             setUserNames(users)
             if(!flag){
                 setHostName(users[users.length-1].name)
-                setPosition(users[users.length-1].name)
+                setPosition(users[users.length-1].id)
                 flag = true
             }
          })
@@ -121,7 +121,7 @@ const Room = (props) => {
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
-                       initiator: true,
+            initiator: true,
             trickle: false,
         });
 
@@ -136,7 +136,7 @@ const Room = (props) => {
     
     function addPeer(incomingSignal, callerID) {
         const peer = new Peer({
-                       initiator: true,
+            initiator: false,
             trickle: false,
         });
 
