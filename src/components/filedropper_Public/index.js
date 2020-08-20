@@ -11,6 +11,7 @@ import { Checkbox } from 'pretty-checkbox-react';
 import 'pretty-checkbox'
 import "react-sweet-progress/lib/style.css";
 import "./style.css";
+import {motion} from "framer-motion"
 
 
 function Filedropper(props) {
@@ -39,7 +40,7 @@ function Filedropper(props) {
     }
 
     return (
-        <div className="container">
+        <motion.div className="container" initial = {{x : -1000 , opacity : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.5}}>
             <div {...getRootProps({className: 'dropzone public-dropper'})}>
                  <>
                         {!connectionEstablished?
@@ -130,7 +131,7 @@ function Filedropper(props) {
                                 wait?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                        <p>Wait till the user accepts the file</p>
+                                        <motion.p initial = {{opacity : 0}} animate = {{opacity : 1}}>Wait till the user accepts the file</motion.p>
                                         <Button className="button-secondary" onClick={()=>setBtnWait(false)} type="Button">
                                             Cancel
                                         </Button>
@@ -151,7 +152,7 @@ function Filedropper(props) {
 
                     </>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

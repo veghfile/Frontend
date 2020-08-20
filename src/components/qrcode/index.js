@@ -2,6 +2,7 @@ import React from 'react'
 import QRCode from 'qrcode.react'
 import './style.css'
 import hidden from './../static/hidden.svg'
+import {motion,AnimatePresence} from "framer-motion"
 
 const qrCode = (props) => {
     const {qrUrl,params} = props
@@ -28,7 +29,8 @@ const qrCode = (props) => {
                         <p className="room-ID">{params}</p>
                     </div>
                  </div>
-                <div className = "stackTop" id = "qrBlur" onClick = {showQr}>
+                 
+                <div className = "stackTop" id = "qrBlur" onClick = {showQr} >
                     {/* <img  id  = "hiddeneye" src={hidden} /> */}
                     <div id  = "hiddeneye" class="hidde-label"><img   src={hidden} />
                     <p>SHOW QR CODE</p>

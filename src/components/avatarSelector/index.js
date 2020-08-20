@@ -3,6 +3,7 @@ import './style.css';
 import { Checkbox } from 'pretty-checkbox-react';
 import 'pretty-checkbox'
 import Avatar from '../avatar/index'
+import {motion, AnimatePresence} from 'framer-motion'
 
 
 const AvatarSelector = ({nameID,index,peersAddCallback,peersRemoveCallback,checkReset,checkCallback,check}) => {
@@ -45,7 +46,8 @@ const AvatarSelector = ({nameID,index,peersAddCallback,peersRemoveCallback,check
   }, [checked]);
 
   return (
-    <div className="selector-wrapper" id={nameID}>
+    <AnimatePresence>
+    <motion.div exit = {{y : 100 , opacity : 0}}className="selector-wrapper" id={nameID} initial = {{ x : 100 ,opacity : 0}} animate = {{opacity : 1 , x : 0}} transition = {{duration : 0.3}}>
     <Checkbox state={checked} name={nameID} className="pretty state p-success
 state p-success p-svg p-round p-pulse" onChange={handleChange}>
     <div clasName="state p-success">
@@ -64,7 +66,8 @@ state p-success p-svg p-round p-pulse" onChange={handleChange}>
         </div>
     </div> */}
       <Avatar nameID={nameID}  index={index}/>
-    </div>
+    </motion.div>
+    </AnimatePresence>
   )
 }
 

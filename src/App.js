@@ -3,15 +3,17 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import CreateRoom from "./routes/CreateRoom";
 import Room from "./routes/Room";
 import PublicRoom from "./routes/Public_Room";
-
+import {AnimatePresence} from "framer-motion";
 function App() {
   return (
     <BrowserRouter>
+    <AnimatePresence exitBeforeEnter>
       <Switch>
         <Route path="/" exact component={PublicRoom} />
         <Route path="/room/:roomID" component={Room} />
         <Route path="/public" exact component={PublicRoom} />
       </Switch>
+    </AnimatePresence>
     </BrowserRouter>
   );
 }
