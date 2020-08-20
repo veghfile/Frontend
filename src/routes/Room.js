@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
+import axios from 'axios';
 import styled from "styled-components";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
@@ -16,7 +17,9 @@ import { debounce } from "debounce";
 import './style.css';
 import SocialButton from '../components/SocialSharing/index';
 import Footer from '../components/footer/index'
-
+import codec from 'string-codec'
+import { transitions, positions, Provider as AlertProvider,types } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
 
 const worker = new Worker("../worker.js");
 
@@ -43,9 +46,20 @@ const Room = (props) => {
     const fileNameRef = useRef("");
     const pendingOp = useRef("");
     let count = 0;
-    const roomID = props.match.params.roomID;
+    const roomID = codec.encoder(props.match.params.roomID,'base64');
     let flag = false
     
+
+    const options = {
+        // you can also just use 'bottom center'
+        position: positions.BOTTOM_CENTER,
+        timeout: 5000,
+        offset: '30px',
+        // you can also just use 'scale'
+        transition: transitions.SCALE,
+        type: types.SUCCESS
+      }
+
     useEffect( ()=>{
         (async () => {
         if (!window.WritableStream) {
@@ -53,10 +67,11 @@ const Room = (props) => {
         }
         setCurrentURL(window.location.href)
         socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.103:8000/");       //This is the socketIo server
+        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
+        getip(setPubIp)
         
         socketRef.current.on("all users", users => {
             peerRef.current = createPeer(users.usersInThisRoom[0], socketRef.current.id);
@@ -64,10 +79,9 @@ const Room = (props) => {
  
         socketRef.current.on("usernames", users => {
             setUserNames(users)
-            console.log(users);
             if(!flag){
-                setHostName(users[users.length-1])
-                setPosition(users[users.length-1])
+                setHostName(users[users.length-1].name)
+                setPosition(users[users.length-1].name)
                 flag = true
             }
          })
@@ -107,7 +121,7 @@ const Room = (props) => {
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
-            initiator: true,
+                       initiator: true,
             trickle: false,
         });
 
@@ -122,7 +136,7 @@ const Room = (props) => {
     
     function addPeer(incomingSignal, callerID) {
         const peer = new Peer({
-            initiator: false,
+                       initiator: true,
             trickle: false,
         });
 
@@ -195,11 +209,22 @@ const Room = (props) => {
         }
     }
 
-    function sendFile(file) {
+    async function sendFile(file) {
         const peer = peerRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
         setMaxLoad(Math.floor(file.size/65536))
+
+
+        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+            "roomID":roomID,
+            data:file.size,
+            UserID:hostName,
+            PublicIP:pubIp
+          })
+
+
+          
         peer.write(JSON.stringify({ maxProgress:file.size/65536}));
         pendingOp.current = true
         setLoad(true)
@@ -236,7 +261,7 @@ const Room = (props) => {
 
    
     return (
-        <>
+        <AlertProvider template={AlertTemplate} {...options}>
                 <main>
                   <div className="dropper">
                             <Filedropper 
@@ -264,10 +289,10 @@ const Room = (props) => {
                         </Avatar>
                     </div>
                     <div className = "qrCont">
-                        <QRCode qrUrl  = {currentURL}></QRCode>
+                        <QRCode qrUrl  = {currentURL} params={props.match.params.roomID}></QRCode>
                     </div>
                     <div className = "sharingCont">
-                            <SocialButton/>
+                            <SocialButton params={window.location.href}/>
                     </div>
                   </div>
                   <div className="footer">
@@ -275,7 +300,7 @@ const Room = (props) => {
                   </div>
                 </main>
 
-        </>
+        </AlertProvider>
     );
 };
 

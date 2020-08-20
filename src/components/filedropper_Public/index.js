@@ -40,7 +40,7 @@ function Filedropper(props) {
 
     return (
         <div className="container">
-            <div {...getRootProps({className: 'dropzone'})}>
+            <div {...getRootProps({className: 'dropzone public-dropper'})}>
                  <>
                         {!connectionEstablished?
                             <div className="peer-avatar align-center">
@@ -55,7 +55,7 @@ function Filedropper(props) {
                                 <label>Select All</label>
                                 </Checkbox>
                             <div className="avatar-wrapper"> 
-                            {users.map((item,index) => item.name!=position?<AvatarSelector checkCallback={checkCallback} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
+                            {users.map((item,index) => item.name!=position?<AvatarSelector checkCallback={checkCallback} check={checked} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
                             </div>
                             </>
                             } 

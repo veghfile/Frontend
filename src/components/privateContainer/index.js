@@ -8,6 +8,7 @@ import { v1 as uuid } from "uuid";
 import Button from '../../modules/button/index';
 import {createBrowserHistory} from 'history';
 import Lock from '../static/lock.svg'
+import {hri} from 'human-readable-ids'
 
 
 
@@ -17,7 +18,7 @@ const PrivateContainer = (props) => {
         forceRefresh: true
         });
         function create() {
-            const id = uuid();
+            const id = hri.random();
             history.push(`/room/${id}`);
         }
 

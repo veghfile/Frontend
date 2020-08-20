@@ -5,6 +5,7 @@ import './style.css';
 export default class FileModal extends React.Component {
   state = {
     open: this.props.openModal,
+    mssg: this.props.children,
   };
 
   onCloseModal = () => {
@@ -16,8 +17,8 @@ export default class FileModal extends React.Component {
     return (
       <div>
         <Modal open={open} onClose={this.onCloseModal} closeOnOverlayClick={false} center>
-          <h2>Error :(</h2>
-          <p>The Users Lost connectivity kindly refresh the page or try after a while..</p>
+          <h2>:(</h2>
+          <p>{this.state.mssg}</p>
           <button className="button okay" onClick={()=>{this.onCloseModal()}}>OK</button>
         </Modal>
       </div>

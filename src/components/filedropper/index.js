@@ -35,7 +35,7 @@ function Filedropper(props) {
                             </div>:
                             //add avatar module here
                             <div className="avatar-wrapper"> 
-                            {users.map((item,index) => item!=position?<Avatar nameID={item}  index={item}/>:null)}
+                            {users.map((item,index) => item.name!=position?<Avatar nameID={item.id}  index={item.name}/>:null)}
                             </div>
                             } 
                             <div className="privacy-cont">

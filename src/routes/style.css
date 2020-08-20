@@ -5,6 +5,20 @@
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
+  -youbkit-touch-callout: none;
+  /* iOS Safari */
+  -youbkit-user-select: none;
+  /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE 10+ and Edge */
+  -webkit-user-select: none;
+          user-select: none;
+}
+
+html, body {
+  height: -webkit-fill-available;
 }
 
 .dropper {
@@ -12,6 +26,10 @@
   -ms-grid-column: 1;
   grid-area: box1;
   padding: 5% 5% 2% 5%;
+}
+
+button {
+  cursor: pointer;
 }
 
 .share-info {
@@ -63,6 +81,10 @@
   grid-area: box3;
 }
 
+#root {
+  height: 100%;
+}
+
 main {
   display: -ms-grid;
   display: grid;
@@ -71,7 +93,7 @@ main {
   -ms-grid-rows: 1fr;
       grid-template-rows: 1fr;
       grid-template-areas: "box1 box2" "box3 box3";
-  height: 100vh;
+  height: 100%;
 }
 
 @media only screen and (max-width: 768px) {
@@ -118,7 +140,8 @@ main {
     height: calc(400px + 2vmin);
   }
   .public-drop {
-    max-height: calc(800px + 2vmin) !important;
+    max-height: 600px !important;
+    margin: 0 0 50px;
     height: -webkit-max-content;
     height: -moz-max-content;
     height: max-content;

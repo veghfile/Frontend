@@ -13,6 +13,12 @@
           align-items: center;
 }
 
+@media only screen and (max-width: 768px) {
+  .container {
+    max-height: 600px;
+  }
+}
+
 .dropzone,
 .file-container,
 .peer-avatar {
@@ -34,7 +40,14 @@
 }
 
 .dropzone {
+  margin: 20px;
   padding: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .public-dropper {
+    height: 100vh;
+  }
 }
 
 .file-container,
@@ -60,6 +73,7 @@
           align-items: flex-end;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  padding: 0 0px 10px 0;
 }
 
 .pretty.p-default.p-fill .state label:after {
@@ -197,6 +211,15 @@
 @media only screen and (max-width: 768px) {
   .privacy-cont {
     margin: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .dropzone {
+    max-height: 560px;
+    position: relative;
+    top: 20px;
+    margin: auto 0;
   }
 }
 

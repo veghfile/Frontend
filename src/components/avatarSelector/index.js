@@ -5,7 +5,7 @@ import 'pretty-checkbox'
 import Avatar from '../avatar/index'
 
 
-const AvatarSelector = ({nameID,index,peersAddCallback,peersRemoveCallback,checkReset,checkCallback}) => {
+const AvatarSelector = ({nameID,index,peersAddCallback,peersRemoveCallback,checkReset,checkCallback,check}) => {
 
   const [checked, setChecked] = useState(false);
   const [name,setName] = useState("")
@@ -13,21 +13,26 @@ const AvatarSelector = ({nameID,index,peersAddCallback,peersRemoveCallback,check
 
  
   const handleChange = React.useCallback((e) => {
-    document.getElementById(nameID).style.border = document.getElementById(nameID).style.border == "3px solid rgb(22, 186, 197)" && !checked?"3px solid rgb(199 199 199)":"3px solid #16BAC5";
-    console.log( document.getElementById(nameID),document.getElementById(nameID).style.border);
+    document.getElementById(nameID).style.border = check===false&& checked?"3px solid rgb(199 199 199)":"3px solid #16BAC5";
     setChecked(prev => !prev);
     setName(e.target.name)
-  }, []);
+  }, [check,checked]);
 
   useEffect(()=>{
     setChecked(false)
-    document.getElementById(nameID).style.border = document.getElementById(nameID).style.border == "3px solid rgb(22, 186, 197)" && !checked?"3px solid rgb(199 199 199)":"3px solid #16BAC5";
+    document.getElementById(nameID).style.border = document.getElementById(nameID).style.border = "3px solid rgb(199 199 199)";
     checkCallback()
   },[checkReset])
 
   useEffect(()=>{
     setChecked(false)
-    document.getElementById(nameID).style.border = document.getElementById(nameID).style.border == "3px solid rgb(22, 186, 197)" && !checked?"3px solid rgb(199 199 199)":"3px solid #16BAC5";
+    document.getElementById(nameID).style.border = check? "3px solid rgb(22, 186, 197)":"3px solid rgb(199 199 199)";
+    checkCallback()
+  },[check])
+  
+
+  useEffect(()=>{
+    setChecked(false)
     checkCallback()
   },[])
 

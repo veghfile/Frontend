@@ -13,6 +13,8 @@ export async function down(event, fname, pname) {
         await pipe(streamAsyncIterator(event.data.stream()), fileStream);
     }
     const peer = pname;
-    console.log(pname);
-    peer.write(JSON.stringify({wait: true}));
+    Promise.resolve()
+    .then(() => 
+    peer.write(JSON.stringify({wait: true}))
+    ).catch(console.log)
 }
