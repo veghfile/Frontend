@@ -6,11 +6,13 @@ import Avatar from '../avatar/index'
 import AvatarSelector from '../avatarSelector/index'
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
+import ClipLoader from "react-spinners/BarLoader";
 import { Progress } from 'react-sweet-progress';
 import { Checkbox } from 'pretty-checkbox-react';
 import 'pretty-checkbox'
 import "react-sweet-progress/lib/style.css";
 import "./style.css";
+import {motion} from "framer-motion"
 
 
 function Filedropper(props) {
@@ -39,7 +41,7 @@ function Filedropper(props) {
     }
 
     return (
-        <div className="container">
+        <motion.div className="container" initial = {{x : -1000 , opacity : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.5}}>
             <div {...getRootProps({className: 'dropzone public-dropper'})}>
                  <>
                         {!connectionEstablished?
@@ -82,24 +84,16 @@ function Filedropper(props) {
                             load?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                        <p>Sending File</p>
-                                        <Progress
-                                         percent={Math.floor((isloading/maxLoad)*100)}
-                                        theme={{
-                                            success: {
-                                            symbol: '🏄‍',
-                                            color: 'rgb(223, 105, 180)'
-                                            },
-                                            active: {
-                                            symbol: '😀',
-                                            color: '#fbc630'
-                                            },
-                                            default: {
-                                            symbol: '😱',
-                                            color: '#fbc630'
-                                            }
-                                        }}
-                                        />
+                                        <p>Sending {Math.floor((isloading/maxLoad)*100)} File</p>
+                                        <div className="sweet-loading">
+                                            <ClipLoader
+                                            size={300}
+                                            height={20}
+                                            width={200}
+                                            color={"#16BAC5"}
+                                            loading={true}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             :
@@ -130,7 +124,7 @@ function Filedropper(props) {
                                 wait?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                        <p>Wait till the user accepts the file</p>
+                                        <motion.p initial = {{opacity : 0}} animate = {{opacity : 1}}>Wait till the user accepts the file</motion.p>
                                         <Button className="button-secondary" onClick={()=>setBtnWait(false)} type="Button">
                                             Cancel
                                         </Button>
@@ -151,7 +145,7 @@ function Filedropper(props) {
 
                     </>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

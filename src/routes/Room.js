@@ -66,8 +66,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
@@ -75,6 +75,7 @@ const Room = (props) => {
         
         socketRef.current.on("all users", users => {
             peerRef.current = createPeer(users.usersInThisRoom[0], socketRef.current.id);
+            console.log(users.usersNamesInThisRoom);
         });
  
         socketRef.current.on("usernames", users => {
@@ -121,7 +122,7 @@ const Room = (props) => {
 
     function createPeer(userToSignal, callerID) {
         const peer = new Peer({
-                       initiator: true,
+            initiator: true,
             trickle: false,
         });
 
@@ -136,7 +137,7 @@ const Room = (props) => {
     
     function addPeer(incomingSignal, callerID) {
         const peer = new Peer({
-                       initiator: true,
+            initiator: false,
             trickle: false,
         });
 
@@ -214,20 +215,17 @@ const Room = (props) => {
         const stream = file.stream();
         const reader = stream.getReader();
         setMaxLoad(Math.floor(file.size/65536))
-
+        console.log(userNames, peerRef.current);
 
         const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
             "roomID":roomID,
             data:file.size,
             UserID:hostName,
             PublicIP:pubIp
-          })
-
-
-          
+        })
+        setLoad(true)
         peer.write(JSON.stringify({ maxProgress:file.size/65536}));
         pendingOp.current = true
-        setLoad(true)
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
         });
@@ -238,8 +236,8 @@ const Room = (props) => {
                 count = 0;
                 return;
             }
-            
-            setIsloading(count=>count+1)
+            // count++
+            // setIsloading(count=>count+1)
             
             
             peer.write(value);

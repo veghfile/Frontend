@@ -16,7 +16,7 @@ import FileModal from '../components/filemodal/index';
 import ErrorFileModal from '../components/errorfilemodal/index';
 import Avatar from '../components/avatarMain/index';
 import './style.css';
-import {throttle} from 'lodash';
+import {throttle,debounce} from 'lodash';
 import { v1 as uuid } from "uuid";
 import Footer from '../components/footer/index'
 import SocialButton from '../components/SocialSharingPublic/index';
@@ -36,7 +36,7 @@ const PublicRoom = (props) => {
     const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity kindly refresh the page or try after a while..");
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
-    const [hostName, setHostName] = useState(0);
+    const [hostName, setHostName] = useState(51);
     const [position, setPosition] = useState(0);
     const [userNames, setUserNames] = useState([]);
     const [btnWait, setBtnWait] = useState(false);
@@ -254,10 +254,10 @@ const PublicRoom = (props) => {
         const reader = stream.getReader();
 
 
+        setLoad(true)
         setMaxLoad(Math.floor(file.size/65536))
         setCheckReset(true)
         pendingOp.current = true
-        setLoad(true)
         
         // const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
             //     "roomID":roomID,
@@ -282,12 +282,11 @@ const PublicRoom = (props) => {
         function handlereading(done, value) {
             if (done) {
                 peersToSend.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
-                setLoad(false)
                 count = 0;
                 return;
             }
             
-            // throttle(()=>setIsloading(count=>count+1),1000)()
+            debounce((isloading)=>setIsloading(isloading+1),10)
             
             // setIsloading(count=>count+1)
             peersToSend.forEach(item => item.peer.write(value));
@@ -369,10 +368,11 @@ const PublicRoom = (props) => {
                     <SocialButton params={window.location.href}/>
                     </div>
                   </div>
-                  <div className="footer">
+                  <div className="footer" >
                     <Footer></Footer>
                   </div>
                 </main>
+               
 
         </AlertProvider>
     );

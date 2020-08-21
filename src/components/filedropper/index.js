@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {CircleProgress} from 'react-gradient-progress'
 import Usersvg from '../static/user.svg'
 import Avatar from '../avatar/index'
 import AvatarSelector from '../avatarSelector/index'
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/BarLoader";
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
 import { Progress } from 'react-sweet-progress';
 import "./style.css";
+import {motion} from 'framer-motion';
+
 
 
 function Filedropper(props) {
@@ -22,8 +26,10 @@ function Filedropper(props) {
         }
     });
 
+
+
     return (
-        <div className="container">
+        <motion.div className="container" initial = {{x : -1000 , opacity  : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.3}}>
             <div {...getRootProps({className: 'dropzone'})}>
                  <>
                         {!connectionEstablished?
@@ -62,23 +68,15 @@ function Filedropper(props) {
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <p>Sending File</p>
-                                        <Progress
-                                         percent={Math.floor((isloading/maxLoad)*100)}
-                                        theme={{
-                                            success: {
-                                            symbol: '🏄‍',
-                                            color: 'rgb(223, 105, 180)'
-                                            },
-                                            active: {
-                                            symbol: '😀',
-                                            color: '#fbc630'
-                                            },
-                                            default: {
-                                            symbol: '😱',
-                                            color: '#fbc630'
-                                            }
-                                        }}
-                                        />
+                                        <div className="sweet-loading">
+                                            <ClipLoader
+                                            size={300}
+                                            height={20}
+                                            width={200}
+                                            color={"#16BAC5"}
+                                            loading={true}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             :
@@ -130,7 +128,7 @@ function Filedropper(props) {
 
                     </>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
