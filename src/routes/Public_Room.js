@@ -16,6 +16,7 @@ import FileModal from '../components/filemodal/index';
 import ErrorFileModal from '../components/errorfilemodal/index';
 import Avatar from '../components/avatarMain/index';
 import './style.css';
+import {throttle} from 'lodash';
 import { v1 as uuid } from "uuid";
 import Footer from '../components/footer/index'
 import SocialButton from '../components/SocialSharingPublic/index';
@@ -158,7 +159,7 @@ const PublicRoom = (props) => {
         const peer = new Peer({
             initiator: true,
             trickle: false,
-            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
+            
         });
 
         //handling guest avatar creating logic here
@@ -173,7 +174,7 @@ const PublicRoom = (props) => {
         const peer = new Peer({
             initiator: false,
             trickle: false,
-            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
+            
         });
 
         //handling host avatar creating logic here
@@ -247,37 +248,33 @@ const PublicRoom = (props) => {
         }
     }
 
-    async function sendFile(file) {
+     function sendFile(file) {
         const peer = peersRef.current;
         const stream = file.stream();
         const reader = stream.getReader();
 
-        if(file.size > 11000000){
-            setErrorMssg("The App is still in Beta. Kindly Share files of size bellow 1GB.")
-            setError(true)
-            return
-        }
 
         setMaxLoad(Math.floor(file.size/65536))
-        Promise.resolve()
-        .then(() => 
-        peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
-        )
-        .catch(setError(true))
-
-        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
-            "roomID":roomID,
-            data:file.size,
-            UserID:hostName,
-            PublicIP:pubIp
-          })
-
-        let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
-        peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
         setCheckReset(true)
         pendingOp.current = true
         setLoad(true)
+        
+        // const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+            //     "roomID":roomID,
+            //     data:file.size,
+            //     UserID:hostName,
+            //     PublicIP:pubIp
+            //   })
+            let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
+            peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
+            console.log(peersToSend);
 
+            Promise.resolve()
+            .then(() => 
+            peersToSend.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
+            )
+            .catch(console.log)
+            
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
         });
@@ -290,7 +287,9 @@ const PublicRoom = (props) => {
                 return;
             }
             
-            setIsloading(count=>count+1)
+            // throttle(()=>setIsloading(count=>count+1),1000)()
+            
+            // setIsloading(count=>count+1)
             peersToSend.forEach(item => item.peer.write(value));
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
@@ -298,6 +297,11 @@ const PublicRoom = (props) => {
         }
         
 
+    }
+
+    function loadIncremetor(){
+            
+            console.log(isloading);
     }
 
     function fileCallback(file){
