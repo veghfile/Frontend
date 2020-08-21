@@ -75,8 +75,8 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
@@ -138,7 +138,9 @@ const PublicRoom = (props) => {
         socketRef.current.on("user left", (data) => {
             handleLeaving()
         });
+        
     })()
+
     }, []);
     
     function handleLeaving (){
@@ -164,7 +166,8 @@ const PublicRoom = (props) => {
         peer.on("signal", signal => {
             socketRef.current.emit("sending signal", { userToSignal, callerID, signal});
         });
-        peer.on("data",(e)=>{handleReceivingData(e)});
+
+        peer.on("data",handleReceivingData);
         return peer;
     }
     
@@ -179,7 +182,7 @@ const PublicRoom = (props) => {
             socketRef.current.emit("returning signal", { signal, callerID});
         });
 
-        peer.on("data",(e)=>{handleReceivingData(e)});
+        peer.on("data",handleReceivingData);
         peer.signal(incomingSignal);
         setConnection(true);
         return peer;
@@ -250,28 +253,24 @@ const PublicRoom = (props) => {
         const stream = file.stream();
         const reader = stream.getReader();
 
-        if(file.size > 11000000){
-            setErrorMssg("The App is still in Beta. Kindly Share files of size bellow 1GB.")
-            setError(true)
-            return
-        }
-
+        
+        let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
+        peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
+        console.log(peersToSend);
         setMaxLoad(Math.floor(file.size/65536))
         Promise.resolve()
         .then(() => 
-        peersRef.current.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
+        peersToSend.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
         )
         .catch(setError(true))
 
-        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
-            "roomID":roomID,
-            data:file.size,
-            UserID:hostName,
-            PublicIP:pubIp
-          })
+        // const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+        //     "roomID":roomID,
+        //     data:file.size,
+        //     UserID:hostName,
+        //     PublicIP:pubIp
+        //   })
 
-        let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
-        peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
         setCheckReset(true)
         pendingOp.current = true
         setLoad(true)
@@ -283,7 +282,7 @@ const PublicRoom = (props) => {
         function handlereading(done, value) {
             if (done) {
                 peersToSend.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
-                setLoad(false)
+                // setLoad(false)
                 count = 0;
                 return;
             }

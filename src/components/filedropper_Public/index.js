@@ -40,7 +40,7 @@ function Filedropper(props) {
     }
 
     return (
-        <motion.div className="container" initial = {{x : -1000 , opacity : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.5}}>
+        <div className="container" initial = {{x : -1000 , opacity : 0}} animate = {{x : 0 , opacity : 1}} transition = {{ duration : 0.5}}>
             <div {...getRootProps({className: 'dropzone public-dropper'})}>
                  <>
                         {!connectionEstablished?
@@ -56,7 +56,7 @@ function Filedropper(props) {
                                 <label>Select All</label>
                                 </Checkbox>
                             <div className="avatar-wrapper"> 
-                            {users.map((item,index) => item.name!=position?<AvatarSelector checkCallback={checkCallback} check={checked} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
+                            {users.map((item,index) => item.name!=position?<AvatarSelector key={item.id} checkCallback={checkCallback} check={checked} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
                             </div>
                             </>
                             } 
@@ -84,7 +84,8 @@ function Filedropper(props) {
                                 <div className="file-container">
                                     <div className="input-cont">
                                         <p>Sending File</p>
-                                        <Progress
+                                        {/* {console.log(Math.floor((isloading/maxLoad)*100))} */}
+                                        {/* <Progress
                                          percent={Math.floor((isloading/maxLoad)*100)}
                                         theme={{
                                             success: {
@@ -100,7 +101,8 @@ function Filedropper(props) {
                                             color: '#fbc630'
                                             }
                                         }}
-                                        />
+                                        /> */}
+                                        <progress value={Math.floor((isloading/maxLoad)*100)} max="100"></progress>
                                     </div>
                                 </div>
                             :
@@ -152,7 +154,7 @@ function Filedropper(props) {
 
                     </>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
