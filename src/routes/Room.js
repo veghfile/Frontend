@@ -248,12 +248,12 @@ const Room = (props) => {
     async function sendData (roomID,file,hostName,pubIp){
 
         // You can host your DB and store basic data about the transfer
-        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
-        "roomID":roomID,
-        data:file.size,
-        UserID:hostName,
-        PublicIP:pubIp
-      })
+    //     const response = await axios.post('db_url',{
+    //     "roomID":roomID,
+    //     data:file.size,
+    //     UserID:hostName,
+    //     PublicIP:pubIp
+    //   })
 }
 
     function fileCallback(file){

@@ -75,7 +75,7 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/"); 
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/"); //Hosted socketIo server only use if you only want make frontend changes
         socketRef.current = io("http://192.168.0.106:8000/");       //This is the local socketIo server
 
         //This statement is used if the user is on the public route
@@ -107,12 +107,6 @@ const PublicRoom = (props) => {
                inRoomUsers.current = users
                setCheckReset(true)
                
-            //    peersRef.current = peersRef.current.filter((el) => {
-            //     return users.some((f) => {
-            //       return el.peerID == f.id;
-            //     });
-            //   });
-
                if(!flag){
                    setHostName(users[users.length-1].name)
                    setPosition(users[users.length-1].name.id)
@@ -151,12 +145,6 @@ const PublicRoom = (props) => {
     }, []);
     
     function handleLeaving (){
-
-        // peersRef.current = peersRef.current.filter((el) => {
-        //     return userNames.some((f) => {
-        //       return el.peerID == f.id;
-        //     });
-        //   });
 
         if(pendingOp.current){
           setError(true)
@@ -319,12 +307,13 @@ const PublicRoom = (props) => {
     }
 
     async function sendData (roomID,file,hostName,pubIp){
-                const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
-                "roomID":roomID,
-                data:file.size,
-                UserID:hostName,
-                PublicIP:pubIp
-              })
+        // You can host your DB and store basic data about the transfer
+    //     const response = await axios.post('db_url',{
+    //     "roomID":roomID,
+    //     data:file.size,
+    //     UserID:hostName,
+    //     PublicIP:pubIp
+    //   })
     }
 
     function fileCallback(file){
