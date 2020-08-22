@@ -1,73 +1,114 @@
-<<<<<<< HEAD
-# Project_Obsidian_frontend
-p2p fileshare (front-end)
-=======
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p align="center">
+  <a href="https://vegh-staging.surge.sh/">
+    <img src="https://i.ibb.co/0m4Wrq3/Vegh-Logo-01.png">
+  </a>
+</p>
 
-## Available Scripts
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/veghfile/frontend/graphs/commit-activity) [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://veghfile.github.io/) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://veghfile.github.io/)
 
-In the project directory, you can run:
+# Vegh - A simple & fast file sharing web app
 
-### `yarn start`
+Vegh is a file sharing progressive web app(PWA) that allows users to send files between multiple devices.
+It works similar to the SHAREit or Google Files app but uses web technology to complete the installation process
+traditional apps for different devices and applications. It also supports current file sharing on multiple devices at the same time as many file sharing applications are lacking.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Vegh uses WebSockets and WebRTC to transfer files between multiple devices.
+It currently uses `socket.io` to make real-time connections on `express` backend. The frontend is built on [React](https://reactjs.org).
+The current method of sharing files involves sharing file as chunks of ArrayBuffer. This may change to increase the efficiency of the file transfer.  
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Table of Contents
+- [Project structure](#project-structure)
+  - [Backend](#backend)
+  - [Frontend](#frontend)
+    - [`static` folder](#static-folder)
+    - [`public` folder](#public-folder)
+  - [Build process](#build-process)
+- [Contributing](#contributing)
+- [Running Vegh in production](#running-Vegh-in-production)
+  - [Building the frontend](#building-the-frontend)
+  - [Building the backend](#building-the-backend)
+  - [Starting the server](#starting-the-server)
+- [License](#license)
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project structure
+The project is divided into the backend and the frontend.
 
-### `yarn build`
+### Backend
+Backend code is present on this repo [Backend](https://github.com/vegh-fileshare/Backend) the server.js file contains all the socket connection code. It is built on `express` and `socket.io` which allows usage of WebSockets and WebRTC.There are different routes for admin panel and database connections.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Frontend
+The frontend code is  present on this repo [Frontend](https://github.com/vegh-fileshare/Frontend). Once the frontend is built for production (using npm run build), all the built files are stored in `build` folder which can be deployed along with the server code.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+#### `static` folder
+This folder is used to store the static files such as images, fonts, and JavaScript files that shouldn't be bundled with the rest of the code.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- React is used for the UI of the app.
+- No UI library is being used as of now.
+- Sass is used for CSS pre-processing.
+### Build process
+Build process is setup using NPM run build. It builds the app for production to the build folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### `yarn eject`
+## Contributing
+Thanks for contributing to Vegh! Make sure to **Fork** this repository into your account before making any commits. Then use the following commands to set up the project
+### Frontend
+```bash
+git clone https://github.com/vegh-fileshare/Frontend.git
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Backend
+```bash
+git clone https://github.com/vegh-fileshare/Backend.git
+npm install
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+All development happens on the `staging` branch. The `master` branch contains the known stable version of Vegh. To make your contributions, create a new branch from `staging`.
+```bash
+git checkout -b my-branch staging
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Start the live development server. The server would run at port `3000` for frontend and the app can be accessed on `localhost:3000`
+```bash
+npm run start
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Start the live development server. The server would run at port `8000` for backend .
+```bash
+npm run start
+```
+Now you make sure you make changes needed in the `.env` files
 
-## Learn More
+Now you can make your changes, and commit them. Make sure you have a clear and summarized message for your commits
+```bash
+git add .
+git commit -m "My fixes"
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Push the changes to your fork.
+```bash
+git push origin my-branch
+```
 
-### Code Splitting
+This is a good time, to open a pull request in this repository with the changes you have made. Make sure you open a pull request to merge to `staging` branch and not the `master` branch directly.
+## Running Vegh in production
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+### Building the frontend
+```bash
+npm run build
+```
+The frontend built code would be located in the `dist` folder.
+### Starting the frontend server
+```bash
+npm start
+```
+Vegh should be running on port `3030`.
+### Building and Starting the backend
+```bash
+node server.js
+```
 
-### Analyzing the Bundle Size
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
->>>>>>> 158ab469812414f0e180f2b371a96b4b540651f3
+## License
+Vegh is [MIT Licensed](https://github.com/veghfile/veghfile.github.io/blob/master/LICENSE)

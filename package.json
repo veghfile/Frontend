@@ -10,7 +10,6 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
     "buffer": "^5.6.0",
-    "debounce": "^1.2.0",
     "framer-motion": "^2.5.3",
     "human-readable-ids": "^1.0.4",
     "lodash": "^4.17.19",
@@ -39,7 +38,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cd build && cp index.html 200.html && surge",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
