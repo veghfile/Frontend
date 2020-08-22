@@ -13,13 +13,14 @@ import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
 import Avatar from '../components/avatarMain/index';
 import {throttle} from 'lodash';
-import { debounce } from "debounce";
 import './style.css';
 import SocialButton from '../components/SocialSharing/index';
 import Footer from '../components/footer/index'
 import codec from 'string-codec'
 import { transitions, positions, Provider as AlertProvider,types } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
+import dotenv from 'dotenv'
+dotenv.config()
 
 const worker = new Worker("../worker.js");
 
@@ -66,8 +67,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/"); //Hosted socketIo server only use if you only want make frontend changes
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the local socketIo server
 
         //This statement is used if the user is on the public route
         socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
@@ -245,6 +246,8 @@ const Room = (props) => {
     }
 
     async function sendData (roomID,file,hostName,pubIp){
+
+        // You can host your DB and store basic data about the transfer
         const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
         "roomID":roomID,
         data:file.size,

@@ -24,7 +24,6 @@ import { transitions, positions, Provider as AlertProvider,types } from 'react-a
 import AlertTemplate from 'react-alert-template-basic';
 
 
-
 const worker = new Worker("../worker.js");
 
 const PublicRoom = (props) => {
@@ -76,8 +75,8 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/"); 
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the local socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
@@ -238,7 +237,8 @@ const PublicRoom = (props) => {
                 ).catch(console.log)
                 break;        
             default: 
-                setIsloading(count=>count+1)
+            throttle(()=>{
+                setIsloading(count=>count+1)},10000)() 
                 setReceiver(true)
                 worker.postMessage(data);
         }        
