@@ -4,7 +4,6 @@ import './style.css'
 import hidden from './../static/hidden.svg'
 import publicRoom from './../static/Public_Room.svg';
 import IconButton from '../../modules/IconButton/index';
-import { v1 as uuid } from "uuid";
 import Button from '../../modules/button/index';
 import {createBrowserHistory} from 'history';
 import Lock from '../static/lock.svg'

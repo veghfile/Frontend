@@ -5,7 +5,6 @@ import whatsAppIcon from './../static/whatsapp.svg';
 import copyLink from './../static/copylink.svg';
 import Lock from '../static/lock.svg'
 import Button from '../../modules/button/index';
-import { v1 as uuid } from "uuid";
 import {hri} from 'human-readable-ids'
 import {createBrowserHistory} from 'history';
 import { useAlert as UseAlert } from 'react-alert'
