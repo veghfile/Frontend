@@ -57,7 +57,7 @@ function Filedropper(props) {
                                 <label>Select All</label>
                                 </Checkbox>
                             <div className="avatar-wrapper"> 
-                            {users.map((item,index) => item.name!=position?<AvatarSelector checkCallback={checkCallback} check={checked} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
+                            {users.map((item,index) => item.name!=position?<AvatarSelector key={item.id} checkCallback={checkCallback} check={checked} checkReset={checkReset} peersAddCallback={handleUsers} peersRemoveCallback={removeUsers} nameID={item.id}  index={item.name}/>:null)}
                             </div>
                             </>
                             } 

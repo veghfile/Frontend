@@ -66,8 +66,8 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
         socketRef.current.emit("join room", roomID,true);          //private logic (TODO split this logic)
@@ -82,7 +82,7 @@ const Room = (props) => {
             setUserNames(users)
             if(!flag){
                 setHostName(users[users.length-1].name)
-                setPosition(users[users.length-1].name)
+                setPosition(users[users.length-1].id)
                 flag = true
             }
          })

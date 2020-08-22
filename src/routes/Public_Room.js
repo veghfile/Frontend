@@ -76,8 +76,8 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        socketRef.current = io("https://p2p-dev.herokuapp.com/");
-        // socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
+        // socketRef.current = io("https://p2p-dev.herokuapp.com/");
+        socketRef.current = io("http://192.168.0.106:8000/");       //This is the socketIo server
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
@@ -146,7 +146,9 @@ const PublicRoom = (props) => {
         socketRef.current.on("user left", (data) => {
             handleLeaving()
         });
+        
     })()
+
     }, []);
     
     function handleLeaving (){
@@ -180,7 +182,8 @@ const PublicRoom = (props) => {
         peer.on("signal", signal => {
             socketRef.current.emit("sending signal", { userToSignal, callerID, signal});
         });
-        peer.on("data",(e)=>{handleReceivingData(e)});
+
+        peer.on("data",handleReceivingData);
         return peer;
     }
     
@@ -196,7 +199,7 @@ const PublicRoom = (props) => {
             socketRef.current.emit("returning signal", { signal, callerID});
         });
 
-        peer.on("data",(e)=>{handleReceivingData(e)});
+        peer.on("data",handleReceivingData);
         peer.signal(incomingSignal);
         setConnection(true);
         return peer;
