@@ -98,12 +98,12 @@ This is a good time, to open a pull request in this repository with the changes 
 ```bash
 npm run build
 ```
-The frontend built code would be located in the `dist` folder.
+The frontend built code would be located in the `build` folder.
 ### Starting the frontend server
 ```bash
 npm start
 ```
-Vegh should be running on port `3030`.
+Vegh should be running on port `3000`.
 ### Building and Starting the backend
 ```bash
 node server.js
