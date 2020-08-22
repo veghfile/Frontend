@@ -107,6 +107,13 @@ const PublicRoom = (props) => {
                setUserNames(users)
                inRoomUsers.current = users
                setCheckReset(true)
+               
+            //    peersRef.current = peersRef.current.filter((el) => {
+            //     return users.some((f) => {
+            //       return el.peerID == f.id;
+            //     });
+            //   });
+
                if(!flag){
                    setHostName(users[users.length-1].name)
                    setPosition(users[users.length-1].name.id)
@@ -143,6 +150,13 @@ const PublicRoom = (props) => {
     }, []);
     
     function handleLeaving (){
+
+        // peersRef.current = peersRef.current.filter((el) => {
+        //     return userNames.some((f) => {
+        //       return el.peerID == f.id;
+        //     });
+        //   });
+
         if(pendingOp.current){
           setError(true)
           setErrorMssg("User Left The file Might be Coruptted.")
@@ -209,7 +223,12 @@ const PublicRoom = (props) => {
                 pendingOp.current = false;
                 count = 0;
                 setIsloading(0)
-                fileNameRef.current = parsed.fileName;      
+                fileNameRef.current = parsed.fileName; 
+                peersRef.current = peersRef.current.filter((el) => {
+                    return inRoomUsers.current.map((f) => {
+                        return el.peerID == f.id;
+                    });
+                  });     
                 Promise.resolve()
                 .then(() => 
                 peersRef.current.forEach(item =>item.peer.write(JSON.stringify({load:true})))
@@ -236,7 +255,6 @@ const PublicRoom = (props) => {
         count = 0;
         setIsloading(0)
         worker.postMessage("abort");
-        // peersRef.current.forEach(item =>item.peer.end(JSON.stringify({ wait:true})));
     }
 
     function sendConfirm (ans){
@@ -248,32 +266,32 @@ const PublicRoom = (props) => {
         }
     }
 
-     function sendFile(file) {
-        const peer = peersRef.current;
+      function sendFile(file) {
+         
+        peersRef.current = peersRef.current.filter((el) => {
+            return inRoomUsers.current.map((f) => {
+                return el.peerID == f.id;
+            });
+          });
+
         const stream = file.stream();
         const reader = stream.getReader();
-
 
         setLoad(true)
         setMaxLoad(Math.floor(file.size/65536))
         setCheckReset(true)
         pendingOp.current = true
         
-        // const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
-            //     "roomID":roomID,
-            //     data:file.size,
-            //     UserID:hostName,
-            //     PublicIP:pubIp
-            //   })
-            let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
-            peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
-            console.log(peersToSend);
+        sendData(roomID,file,hostName,pubIp)
 
-            Promise.resolve()
-            .then(() => 
+        let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
+        peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
+
+
+        Promise.resolve()
+        .then(() => 
             peersToSend.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
-            )
-            .catch(console.log)
+        ).catch(console.log)
             
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
@@ -286,9 +304,8 @@ const PublicRoom = (props) => {
                 return;
             }
             
-            debounce((isloading)=>setIsloading(isloading+1),10)
-            
-            // setIsloading(count=>count+1)
+            // debounce((isloading)=>setIsloading(isloading+1),100)
+
             peersToSend.forEach(item => item.peer.write(value));
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);
@@ -298,9 +315,13 @@ const PublicRoom = (props) => {
 
     }
 
-    function loadIncremetor(){
-            
-            console.log(isloading);
+    async function sendData (roomID,file,hostName,pubIp){
+                const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+                "roomID":roomID,
+                data:file.size,
+                UserID:hostName,
+                PublicIP:pubIp
+              })
     }
 
     function fileCallback(file){
@@ -310,7 +331,7 @@ const PublicRoom = (props) => {
 
     function peersAddCallback(peers){
         array.add(peers,peers)
-        uniqueUserref.current = array    
+        uniqueUserref.current = array   
     }
 
     function peersRemoveCallback(peers){

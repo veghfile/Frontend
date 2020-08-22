@@ -179,7 +179,8 @@ const Room = (props) => {
                 peer.write(JSON.stringify({load:true}));              
                 break;        
             default: 
-                setIsloading(count=>count+1)
+                throttle(()=>{
+                    setIsloading(count=>count+1)},10000)()
                 setReceiver(true)
                 worker.postMessage(data);
         }        
@@ -236,10 +237,9 @@ const Room = (props) => {
                 count = 0;
                 return;
             }
-            // count++
+
             // setIsloading(count=>count+1)
-            
-            
+                  
             peer.write(value);
             reader.read().then(obj => {
                 handlereading(obj.done, obj.value);

@@ -84,7 +84,7 @@ function Filedropper(props) {
                             load?
                                 <div className="file-container">
                                     <div className="input-cont">
-                                        <p>Sending {Math.floor((isloading/maxLoad)*100)} File</p>
+                                        <p>Sending File</p>
                                         <div className="sweet-loading">
                                             <ClipLoader
                                             size={300}
