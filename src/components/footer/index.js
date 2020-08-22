@@ -9,9 +9,9 @@ const Footer = () => {
             <motion.div className = "footerContainer" initial = {{y : +100}} animate = {{y : 0}}>
                 <img className = "logo" src = {Logo} alt = "Vegh Logo"/>
                 <div className = "linkContainer">
-                <p className = "about"><a href = "www.google.com">About</a><span> |</span></p>
-                <p className = "tos"><a href = "www.google.com">Terms of Service</a><span> |</span></p>
-                <p className = "privacy"><a href = "www.google.com">Privacy</a></p>
+                <p className = "about"><a href = "https://veghfile.github.io">About</a><span> |</span></p>
+                <p className = "tos"><a href = "https://veghfile.github.io/tos">Terms of Service</a><span> |</span></p>
+                <p className = "privacy"><a href = "https://veghfile.github.io/privacy">Privacy</a></p>
                 </div>
             </motion.div>
         </div>
