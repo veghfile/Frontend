@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import styled from "styled-components";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
@@ -17,7 +16,6 @@ import ErrorFileModal from '../components/errorfilemodal/index';
 import Avatar from '../components/avatarMain/index';
 import './style.css';
 import {throttle,debounce} from 'lodash';
-import { v1 as uuid } from "uuid";
 import Footer from '../components/footer/index'
 import SocialButton from '../components/SocialSharingPublic/index';
 import { transitions, positions, Provider as AlertProvider,types } from 'react-alert';
