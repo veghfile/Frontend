@@ -247,6 +247,9 @@ let avatars = [{
 {
   path:svg50,
   name:"Finicky Fox"
+},{
+  path:svg50,
+  name:"Finicky Fox"
 }]
 
 export function AvatarGen (i){

@@ -25,6 +25,7 @@
     "react-responsive-modal": "^5.0.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "react-spinners": "^0.9.0",
     "react-sweet-progress": "^1.1.2",
     "simple-peer": "^9.7.0",
     "socket.io-client": "^2.3.0",
