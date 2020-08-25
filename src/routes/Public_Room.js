@@ -5,8 +5,6 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
-import {AvatarGen} from '../util/randomAvatarGen';
-import QRCode from '../components/qrcode/index';
 import axios from 'axios';
 import codec from 'string-codec'
 import Filedropper from '../components/filedropper_Public/index';
@@ -30,7 +28,7 @@ const PublicRoom = (props) => {
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
     const [error, setError] = useState(false);
-    const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity kindly refresh the page or try after a while..");
+    const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity. Click ok to refresh the page or try after a while..");
     const [isloading, setIsloading] = useState(1);
     const [maxLoad, setMaxLoad] = useState(0);
     const [hostName, setHostName] = useState(51);
@@ -73,7 +71,7 @@ const PublicRoom = (props) => {
         if (!window.WritableStream) {
             streamSaver.WritableStream = WritableStream;
         }
-        socketRef.current = io("https://p2p-dev.herokuapp.com/"); //Hosted socketIo server only use if you only want make frontend changes
+        socketRef.current = io("https://vegh.openode.io/"); //Hosted socketIo server only use if you only want to make frontend changes
         // socketRef.current = io("https://192.168.0.106:8000/");       //This is the local socketIo server
 
         //This statement is used if the user is on the public route
@@ -128,7 +126,7 @@ const PublicRoom = (props) => {
         });
         
         //calling Download service worker
-        worker.addEventListener("message", (e)=>down(e,fileNameRef.current,peerRef.current));
+        worker.addEventListener("message", (e)=>down(e,fileNameRef.current));
 
         socketRef.current.on("room full", () => {
             alert("room is full");
@@ -145,8 +143,8 @@ const PublicRoom = (props) => {
     function handleLeaving (){
 
         if(pendingOp.current){
+            setErrorMssg("User Left The file Might be Coruptted.")
           setError(true)
-          setErrorMssg("User Left The file Might be Coruptted.")
         }   
         if(inRoomUsers.current.length<2){            
             setConnection(false);
@@ -223,8 +221,7 @@ const PublicRoom = (props) => {
                 ).catch(console.log)
                 break;        
             default: 
-            throttle(()=>{
-                setIsloading(count=>count+1)},10000)() 
+            throttle(()=>{setIsloading(count=>count+1)},10000)() 
                 setReceiver(true)
                 worker.postMessage(data);
         }        
@@ -256,12 +253,13 @@ const PublicRoom = (props) => {
     }
 
       function sendFile(file) {
-         
+
         peersRef.current = peersRef.current.filter((el) => {
             return inRoomUsers.current.map((f) => {
                 return el.peerID == f.id;
             });
           });
+          
 
         const stream = file.stream();
         const reader = stream.getReader();
@@ -272,7 +270,7 @@ const PublicRoom = (props) => {
         pendingOp.current = true
         
         sendData(roomID,file,hostName,pubIp)
-
+        
         let peersToSend = peersRef.current.filter(item => uniqueUserref.current.has(item.peerID))
         peersToSend = peersToSend.length == 0 ? peersRef.current : peersToSend
 
@@ -280,7 +278,10 @@ const PublicRoom = (props) => {
         Promise.resolve()
         .then(() => 
             peersToSend.forEach(item =>item.peer.write(JSON.stringify({ maxProgress:file.size/65536})))
-        ).catch(console.log)
+        ).catch((errors)=>{
+            setError(true)
+            window.location.reload(false)
+        })
             
         reader.read().then(obj => {
             handlereading(obj.done, obj.value);
@@ -290,6 +291,7 @@ const PublicRoom = (props) => {
             if (done) {
                 peersToSend.forEach(item =>item.peer.write(JSON.stringify({ done: true, fileName: file.name})));
                 count = 0;
+                pendingOp.current = false
                 return;
             }
             
@@ -306,7 +308,7 @@ const PublicRoom = (props) => {
 
     async function sendData (roomID,file,hostName,pubIp){
         // You can host your DB and store basic data about the transfer
-        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
+        const response = await axios.post('https://vegh.openode.io/log',{
         "roomID":roomID,
         data:file.size,
         UserID:hostName,
@@ -362,7 +364,7 @@ const PublicRoom = (props) => {
                             delPeers={peersRemoveCallback}
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
-                            {error?<ErrorFileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} >{errorMssg}</ErrorFileModal>:null}
+                            {error?<ErrorFileModal openModal={error} handleAbort={downloadAbort} handleDownload={download} >{errorMssg}</ErrorFileModal>:null}
                             
                   </div>
                   <div className="public-info share-info ">

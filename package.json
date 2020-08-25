@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://p2p-dev.herokuapp.com/",
+  "proxy": "https://vegh.openode.io/",
   "dependencies": {
     "@mdi/font": "^5.5.55",
     "@testing-library/jest-dom": "^4.2.4",
