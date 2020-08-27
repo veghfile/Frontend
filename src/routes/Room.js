@@ -63,7 +63,7 @@ const Room = (props) => {
             streamSaver.WritableStream = WritableStream;
         }
         setCurrentURL(window.location.href)
-        socketRef.current = io("https://vegh.openode.io/"); //Hosted socketIo server only use if you only want to make frontend changes
+        socketRef.current = io("https://p2p-dev.herokuapp.com/"); //Hosted socketIo server only use if you only want to make frontend changes
         // socketRef.current = io("https://192.168.0.106:8000/");       //This is the local socketIo server
 
         //This statement is used if the user is on the public route
@@ -136,6 +136,12 @@ const Room = (props) => {
         const peer = new Peer({
             initiator: false,
             trickle: false,
+            config:{iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+                { urls: 'stun:stun.services.mozilla.com' },
+
+              ]}
         });
 
         //handling host avatar creating logic here
@@ -244,7 +250,7 @@ const Room = (props) => {
     async function sendData (roomID,file,hostName,pubIp){
 
         // You can host your DB and store basic data about the transfer
-        const response = await axios.post('https://vegh.openode.io/log',{
+        const response = await axios.post('https://p2p-dev.herokuapp.com/log',{
         "roomID":roomID,
         data:file.size,
         UserID:hostName,
