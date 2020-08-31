@@ -1,16 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState,useContext } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import {clipimg} from '../util/clipimg';
 import axios from 'axios';
 import codec from 'string-codec'
 import Filedropper from '../components/filedropper_Public/index';
 import PrivateContainer from '../components/privateContainer/index';
 import FileModal from '../components/filemodal/index';
 import ErrorFileModal from '../components/errorfilemodal/index';
+import ImageFileModal from '../components/imageModal/index';
 import Avatar from '../components/avatarMain/index';
 import './style.css';
 import {throttle,debounce} from 'lodash';
@@ -27,6 +29,7 @@ const PublicRoom = (props) => {
     const [connectionEstablished, setConnection] = useState(false);
     const [file, setFile] = useState();
     const [gotFile, setGotFile] = useState(false);
+    const [gotImg, setGotImg] = useState(false);
     const [error, setError] = useState(false);
     const [errorMssg, setErrorMssg] = useState("The Users Lost connectivity. Click ok to refresh the page or try after a while..");
     const [isloading, setIsloading] = useState(1);
@@ -41,6 +44,7 @@ const PublicRoom = (props) => {
     const [checkReset, setCheckReset] = useState(false);
     const [checked, setChecked] = useState(false);
     const [pubIp , setPubIp] = useState("")
+    const [imgsrc , setImgSrc] = useState("")
     const [users , setUsers] = useState();
     const chunksRef = useRef([]);
     const socketRef = useRef();
@@ -55,7 +59,7 @@ const PublicRoom = (props) => {
     let array = new Set()
     let guestPeers = []
     const roomID = "public";
-    
+
     const options = {
         // you can also just use 'bottom center'
         position: positions.BOTTOM_CENTER,
@@ -76,7 +80,7 @@ const PublicRoom = (props) => {
 
         //This statement is used if the user is on the public route
             getip(setPubIp,socketRef.current)
-           
+
             socketRef.current.on("all users", users => {
                 const peers = [];
                 users.usersInThisRoom.forEach((userID,index) => {
@@ -135,7 +139,9 @@ const PublicRoom = (props) => {
         socketRef.current.on("user left", (data) => {
             handleLeaving()
         });
-        
+
+        clipimg(setFile,setConfirmSend,setGotImg,setImgSrc)
+
     })()
 
     }, []);
@@ -252,8 +258,10 @@ const PublicRoom = (props) => {
         if(ans){
             sendFile(file)
             setConfirmSend(false)
+            setGotImg(false)
         } else{
             setConfirmSend(false)
+            setGotImg(false)
         }
     }
 
@@ -346,7 +354,7 @@ const PublicRoom = (props) => {
    
     return (
         <AlertProvider template={AlertTemplate} {...options}>
-                <main>
+                <main id="dropimg">
                   <div className="dropper public-drop">
                             <Filedropper 
                             connectionEstablished={connectionEstablished} 
@@ -370,6 +378,7 @@ const PublicRoom = (props) => {
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
                             {error?<ErrorFileModal openModal={error} handleAbort={downloadAbort} handleDownload={download} >{errorMssg}</ErrorFileModal>:null}
+                            {gotImg?<ImageFileModal openModal={gotImg} handleAbort={downloadAbort} setGotFile={setGotFile} handleDownload={download} src={imgsrc} ></ImageFileModal>:null}
                             
                   </div>
                   <div className="public-info share-info ">

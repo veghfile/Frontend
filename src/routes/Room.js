@@ -6,10 +6,12 @@ import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
 import streamSaver from "streamsaver";
 import {down} from '../util/downloader';
 import {getip} from '../util/getip';
+import {clipimg} from '../util/clipimg';
 import {AvatarGen} from '../util/randomAvatarGen';
 import QRCode from '../components/qrcode/index';
 import Filedropper from '../components/filedropper/index';
 import FileModal from '../components/filemodal/index';
+import ImageFileModal from '../components/imageModal/index';
 import Avatar from '../components/avatarMain/index';
 import {throttle} from 'lodash';
 import './style.css';
@@ -36,6 +38,8 @@ const Room = (props) => {
     const [receiver, setReceiver] = useState(false);
     const [pubIp , setPubIp] = useState("")
     const [currentURL , setCurrentURL] = useState("")
+    const [gotImg, setGotImg] = useState(false);
+    const [imgsrc , setImgSrc] = useState("")
     const chunksRef = useRef([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
@@ -104,6 +108,8 @@ const Room = (props) => {
             handleLeaving()
             setConnection(false);
         });
+
+        clipimg(setFile,setConfirmSend,setGotImg,setImgSrc)
     })()
     }, []);
 
@@ -209,8 +215,10 @@ const Room = (props) => {
         if(ans){
             sendFile(file)
             setConfirmSend(false)
+            setGotImg(false)
         } else{
             setConfirmSend(false)
+            setGotImg(false)
         }
     }
 
@@ -288,6 +296,7 @@ const Room = (props) => {
                             users = {userNames}
                             sendFile={sendFile} />  
                             {gotFile?<FileModal openModal={gotFile} handleAbort={downloadAbort} handleDownload={download} />:null}
+                            {gotImg?<ImageFileModal openModal={gotImg} handleAbort={downloadAbort} setGotFile={setGotFile} handleDownload={download} src={imgsrc} ></ImageFileModal>:null}
                   </div>
                   <div className="share-info">
                     <div className = "userInfo">
