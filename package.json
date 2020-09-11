@@ -1,6 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "homepage":".",
   "private": true,
   "proxy": "https://p2p-dev.herokuapp.com/",
   "dependencies": {
