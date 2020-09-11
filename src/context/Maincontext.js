@@ -1,4 +1,4 @@
-import React, {useState,useContext, createContext,useEffect} from 'react'
+import React, {useState,createContext,useEffect,useRef} from 'react'
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import { WritableStream ,ReadableStream } from 'web-streams-polyfill/ponyfill';
@@ -7,23 +7,12 @@ import {down} from '../util/downloader';
 import {getip} from '../util/getip';
 import {clipimg} from '../util/clipimg';
 import axios from 'axios';
-import codec from 'string-codec'
-import Filedropper from '../components/filedropper_Public/index';
-import PrivateContainer from '../components/privateContainer/index';
-import FileModal from '../components/filemodal/index';
-import ErrorFileModal from '../components/errorfilemodal/index';
-import ImageFileModal from '../components/imageModal/index';
-import Avatar from '../components/avatarMain/index';
-import './style.css';
-import {throttle,debounce} from 'lodash';
-import Footer from '../components/footer/index'
-import SocialButton from '../components/SocialSharingPublic/index';
-import { transitions, positions, Provider as AlertProvider,types } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
+import {throttle} from 'lodash';
 const worker = new Worker("../worker.js");
-const main = createContext();
 
-export const MainProvider = (props) => {
+export const PublicMainContext = createContext();
+
+export const MainPublicProvider = (props) => {
   const [peers, setPeers] = useState([]);
   const [connectionEstablished, setConnection] = useState(false);
   const [file, setFile] = useState();
@@ -59,15 +48,7 @@ export const MainProvider = (props) => {
   let guestPeers = []
   const roomID = "public";
 
-  const options = {
-      // you can also just use 'bottom center'
-      position: positions.BOTTOM_CENTER,
-      timeout: 5000,
-      offset: '30px',
-      // you can also just use 'scale'
-      transition: transitions.SCALE,
-      type: types.SUCCESS
-    }
+
     useEffect( ()=>{
       (async () => {
       if (!window.WritableStream) {
@@ -345,36 +326,42 @@ function checkCallback(){
     setCheckReset(false)
 }
 
+const states = {
+  connectionEstablished,
+  fileCallback,
+  wait:btnWait,
+  setBtnWait,
+  isloading,
+  receiver,
+  setLoad,
+  confirmSend,
+  sendConfirm,
+  checked,
+  setChecked,
+  maxLoad,
+  load,
+  hostName,
+  position:hostName,
+  users:userNames,
+  checkReset,
+  checkCallback,
+  setPeers:peersAddCallback,
+  delPeers:peersRemoveCallback,
+  sendFile,
+  gotFile,
+  downloadAbort,
+  download,
+  setGotFile,
+  errorMssg,
+  imgsrc,
+  gotImg
+  }
 
 //TODO code splitting components
 
   return (
-    <main.Provider value={{
-      fileCallback,
-      setBtnWait,
-      isloading,
-      receiver,
-      setLoad,
-      confirmSend,
-      sendConfirm,
-      checked,
-      setChecked,
-      maxLoad,
-      load,
-      hostName,
-      userNames,
-      checkReset,
-      checkCallback,
-      setPeers:peersAddCallback,
-      delPeers:peersRemoveCallback,
-      sendFile,
-      gotFile,
-      downloadAbort,
-      download,
-      setGotFile
-      }}>
+    <PublicMainContext.Provider value={states}>
       {props.children}
-    </main.Provider>
+    </PublicMainContext.Provider>
   )
 }
-

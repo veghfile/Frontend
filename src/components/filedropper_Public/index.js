@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useContext} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {CircleProgress} from 'react-gradient-progress'
 import Usersvg from '../static/user.svg'
@@ -13,10 +13,11 @@ import 'pretty-checkbox'
 import "react-sweet-progress/lib/style.css";
 import "./style.css";
 import {motion} from "framer-motion"
+import { PublicMainContext } from '../../context/Maincontext';
 
 
 function Filedropper(props) {
-    const {fileCallback,wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position,setPeers,delPeers,checkReset,checkCallback,checked,setChecked} = props
+    const {fileCallback,wait,connectionEstablished,setBtnWait,load,receiver,confirmSend,sendConfirm,isloading,maxLoad,users,position,setPeers,delPeers,checkReset,checkCallback,checked,setChecked} = useContext(PublicMainContext)
     // let array = new Set()
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         // Dropzone options and events
